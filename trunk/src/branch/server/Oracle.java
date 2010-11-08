@@ -7,8 +7,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -16,7 +14,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
-import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
@@ -51,7 +48,7 @@ public class Oracle extends javax.swing.JFrame {
 	private void initComponents() {
 		messageLabel = new javax.swing.JLabel();
 		removeServerButton = new javax.swing.JButton();
-		textArea = new JTextArea(15, 100);
+		textArea = new JTextArea(15, 70);
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
@@ -90,27 +87,26 @@ public class Oracle extends javax.swing.JFrame {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(14)
-					.addGroup(layout.createParallelGroup(Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(pScroll, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-							.addContainerGap())
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(messageLabel, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-							.addGap(495))))
-				.addGroup(layout.createSequentialGroup()
 					.addGap(31)
-					.addGroup(layout.createParallelGroup(Alignment.LEADING)
+					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(layout.createSequentialGroup()
 							.addComponent(removeServerButton)
 							.addGap(37)
 							.addComponent(addServerButton, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE))
-						.addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-							.addComponent(label, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(label, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(formattedTextField, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-							.addGap(124)))
-					.addGap(260))
+							.addComponent(formattedTextField, GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+							.addGap(24)))
+					.addGap(60))
+				.addGroup(layout.createSequentialGroup()
+					.addGap(4)
+					.addGroup(layout.createParallelGroup(Alignment.LEADING)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(messageLabel, GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+							.addGap(60))
+						.addComponent(pScroll, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+					.addContainerGap())
 		);
 		layout.setVerticalGroup(
 			layout.createParallelGroup(Alignment.LEADING)
@@ -119,7 +115,7 @@ public class Oracle extends javax.swing.JFrame {
 					.addGroup(layout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(label, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 						.addComponent(formattedTextField, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-					.addGap(98)
+					.addGap(8)
 					.addGroup(layout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(removeServerButton)
 						.addComponent(addServerButton))
