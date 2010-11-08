@@ -24,7 +24,7 @@ import javax.swing.JFormattedTextField;
 
 
 /**
- *
+ * Launches the Oracle GUI and performs its functions
  * @author Nikhil
  * 
  */
