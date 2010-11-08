@@ -18,7 +18,7 @@ import java.util.Vector;
 public class NodeProperties {
 	private final Topology topology_;
 	private final NodeLocations serverLocations_;
-	private final Node node_;
+	private final String node_;
 	private String ip_;
 	private final int port_;
 	private final boolean isGui_;
