@@ -23,6 +23,7 @@ public class NodeProperties {
 	private final int port_;
 	private final boolean isGui_;
 	
+	private int groupId_;
 	private int nodeId_;
 	private String topologyFile_;
 	private String serverLocationFile_;
@@ -36,6 +37,7 @@ public class NodeProperties {
 
 	public NodeProperties(String[] args, boolean isGui) throws NodePropertiesException {
 		nodeId_ = -1;
+		groupId_ = -1;
 		topologyFile_ = "";
 		serverLocationFile_ = "";
 		isGui_ = isGui;
@@ -95,6 +97,8 @@ public class NodeProperties {
 					serverLocationFile_ = argument.getValue();
 				} else if (argument.getName().endsWith("sleep")) {
 					sleep_ = Integer.parseInt(argument.getValue());
+				} else if (argument.getName().endsWith("group")) {
+					groupId_ = Integer.parseInt(argument.getValue());
 				} else {
 					throw new FlagParser.FlagParseException(
 							"Unknown flag: " + argument.getName());
