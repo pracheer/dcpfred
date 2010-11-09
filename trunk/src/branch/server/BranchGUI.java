@@ -695,11 +695,11 @@ public class BranchGUI extends javax.swing.JFrame {
 
 				Message msg = Message.parseString(str);
 
-				if(msg.type_ == Message.MsgType.REQ) {
+				if(msg.getType() == Message.MsgType.REQ) {
 					// No-one should send a REQ to GUI.
 					System.err.println("Unexpected message type in GUI. Ignoring.");
 					continue;
-				} else if (msg.type_ == Message.MsgType.RESP) {
+				} else if (msg.getType() == Message.MsgType.RESP) {
 					// Received a response message.
 					// It can be either a snapshot response (initiated by some other GUI).
 					// or response to a request from this GUI.
@@ -720,6 +720,13 @@ public class BranchGUI extends javax.swing.JFrame {
 						System.out.println("notifying...");
 						// Wake-Up the GUI if the request was from this GUI.
 						bmh_.notifyOfResponse();
+					}
+				} else if (msg.getType() == Message.MsgType.SPECIAL) {
+					SpecialMsg sm = msg.getSpecialMsg();
+					
+					if (sm.getType() == SpecialMsg.Type.VIEW) {
+						View updatedView = sm.getView();
+						properties_.updateView(updatedView);
 					}
 				} else {
 					// Only REQ / RESP type message is expected.
