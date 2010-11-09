@@ -174,15 +174,15 @@ public class Oracle extends javax.swing.JFrame {
 	}
 	
 	private void addServerActionPerformed(ActionEvent evt) {
-		ArrayList<String> inititialConfig = new ArrayList<String>();
+		ArrayList<String> initialConfig = new ArrayList<String>();
 		// inititialConfig.add(serverNameTextField.getText());
-		inititialConfig.add("S01_01");
+		initialConfig.add("S01_01");
 //		inititialConfig.add("S02_01");
-		inititialConfig.add("S01_02");
+		initialConfig.add("S01_02");
 //		inititialConfig.add("S02_02");
 //		inititialConfig.add("S01_01");
 
-		for (String server : inititialConfig) {
+		for (String server : initialConfig) {
 			String groupid = NodeName.getService(server);
 			View view;
 			if(properties_.views_.containsKey(groupid))

@@ -19,7 +19,7 @@ public class Sync {
 	public String toString() {
 		String str = "";
 		
-		str += msgSeparator + accountDetails_.size();
+		str += accountDetails_.size();
 		Set<String> keys = accountDetails_.keySet();
 		for (String key : keys) {
 			str += msgSeparator + key + msgSeparator + accountDetails_.get(key);
@@ -35,6 +35,7 @@ public class Sync {
 	}
 	
 	public static Sync parseString(String str) {
+		
 		String[] parts = str.split(msgSeparator);
 		
 		int index = 0;

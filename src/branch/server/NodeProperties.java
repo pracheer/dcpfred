@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.HashMap;
 
 /**
  * 
@@ -26,10 +25,10 @@ public class NodeProperties {
 	private String ip_;
 	private final int port_;
 	private final boolean isGui_;
-	
+
 	public HashMap<String, View> views_ = 
 		new HashMap<String, View>(10);
-	
+
 	private String groupId_;
 	public void setGroupId_(String groupId_) {
 		this.groupId_ = groupId_;
@@ -38,15 +37,15 @@ public class NodeProperties {
 	private String topologyFile_;
 	private String serverLocationFile_;
 	private Integer sleep_ = 0; // sleep time in milliseconds
-	
+
 	public static enum ServerState {
 		HEAD,
 		MIDDLE,
 		TAIL,
 	}
-	
+
 	private ServerState serverState_;  
-	
+
 	public static class NodePropertiesException extends Exception {
 		public NodePropertiesException(String error) {
 			super(error);
@@ -58,13 +57,13 @@ public class NodeProperties {
 		topologyFile_ = "";
 		serverLocationFile_ = "";
 		isGui_ = isGui;
-		
+
 		try {
 			parseCommandLine(args);
 		} catch (FlagParser.FlagParseException fe) {
 			throw new NodePropertiesException(fe.getMessage());
 		}
-		
+
 		// Topology.
 		try {
 			if(topologyFile_.equals("")) {
@@ -74,8 +73,8 @@ public class NodeProperties {
 		} catch (IOException e) {
 			throw new NodePropertiesException(e.getMessage());
 		}
-		
-		
+
+
 		// Server-Locations.
 		try {
 			if (serverLocationFile_.equals("")) {
@@ -85,18 +84,18 @@ public class NodeProperties {
 		} catch (IOException e) {
 			throw new NodePropertiesException(e.getMessage());
 		}
-		
+
 		port_ = serverLocations_.getLocationForNode(node_).getPort();
 		ip_ = serverLocations_.getLocationForNode(node_).getIp(); 
 	}
-	
+
 	private void parseCommandLine(String[] args) throws	FlagParser.FlagParseException {
 		FlagParser parser = new FlagParser();
 		Vector<FlagParser.Argument> parsedArguments = parser.parseFlags(args);
-		
+
 		for (int i = 0; i < parsedArguments.size(); ++i) {
 			FlagParser.Argument argument = parsedArguments.elementAt(i);
-			
+
 			try {
 				if (argument.getName().equals("id")) {
 					node_ = argument.getValue();
@@ -125,7 +124,7 @@ public class NodeProperties {
 			} 
 		}
 	}
-	
+
 	public Topology getTopology() {
 		return topology_;
 	}
@@ -165,27 +164,50 @@ public class NodeProperties {
 	public Integer getSleep() {
 		return sleep_;
 	}
-	
+
 	public ServerState getState() {
 		return serverState_;
 	}
-	
-	public View getView() {
+
+	public View getMyView() {
 		// DO NOT keep a local view_
 		// The updateView method should update the HashMap.
 		// And successive calls to getView() should automatically
 		// get the latest view for the current node.
 		// Keeping a separate view_ will include extra state handling
 		// (as the cache will go dirty).
-		View myView = views_.get(node_);
-		
+		View myView = views_.get(groupId_);
+
 		return myView;
 	}
-	
+
 	public void updateView(View view) {
+
+		ServerState oldState = getState();
 		views_.put(view.getGroupId(), view);
+		if(groupId_.equalsIgnoreCase(view.getGroupId()) && !isGui_) {
+			String myNewSuccessor = view.getSuccessor(node_);
+			if(oldState == ServerState.TAIL) {
+				if(myNewSuccessor != null) {
+					if (view.getPredecessor(node_) != null) {
+						updateState(NodeProperties.ServerState.MIDDLE);
+					} else {
+						updateState(NodeProperties.ServerState.HEAD);
+					}
+				}
+			}
+			else {
+				if (myNewSuccessor == null) {
+					updateState(NodeProperties.ServerState.TAIL);
+				} else if (view.getPredecessor(node_) == null) {
+					updateState(NodeProperties.ServerState.HEAD);
+				} else {
+					updateState(NodeProperties.ServerState.MIDDLE);
+				}
+			}
+		}
 	}
-	
+
 	public void updateState(ServerState state) {
 		serverState_ = state;
 	}

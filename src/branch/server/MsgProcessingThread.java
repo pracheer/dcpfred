@@ -75,7 +75,7 @@ public class MsgProcessingThread extends Thread {
 				// Reply the GUI if the request came from him.
 				final boolean isRequestFromGui = msg.getTrxn().getSerialNum().substring(1,3).equalsIgnoreCase(properties.getGroupId());
 				NodeProperties.ServerState myState = properties.getState();
-				View myView = properties.getView();
+				View myView = properties.getMyView();
 				
 				if (myState == NodeProperties.ServerState.HEAD ||
 						myState == NodeProperties.ServerState.MIDDLE) {
@@ -109,12 +109,12 @@ public class MsgProcessingThread extends Thread {
 	
 	private void processSyncMessage(Sync sync) {
 		AccDetails.synchronizeAccounts(sync);
-		TransactionLog.synchronizeTransactions(sync);		
+		TransactionLog.synchronizeTransactionLog(sync);		
 	}
 	
 	private void processViewMessage(View view) {
 		NodeProperties properties = BranchServer.getProperties();
-		properties.updateView(view);
+		
 		// If it is my group then a few special cases.
 		if (view.getGroupId().equals(properties.getGroupId())) {
 			NodeProperties.ServerState myState = properties.getState();
@@ -130,23 +130,12 @@ public class MsgProcessingThread extends Thread {
 							TransactionLog.getAllTransactions());
 					Message msg = new Message(myNode, new SpecialMsg(sync));
 					NetworkWrapper.sendToServer(msg.toString(), mySuccessor);
-					
-					if (view.getPredecessor(myNode) != null) {
-						properties.updateState(NodeProperties.ServerState.MIDDLE);
-					} else {
-						properties.updateState(NodeProperties.ServerState.HEAD);
-					}
+					System.out.println("Sending a sync message to " + mySuccessor);
+					System.out.println(msg);
 				}
-			} else {
-				if (mySuccessor == null) {
-					properties.updateState(NodeProperties.ServerState.TAIL);
-				} else if (view.getPredecessor(myNode) == null) {
-					properties.updateState(NodeProperties.ServerState.HEAD);
-				} else {
-					properties.updateState(NodeProperties.ServerState.MIDDLE);
-				}
-			}			
+			} 
 		}
 		
+		properties.updateView(view);
 	}
 }
