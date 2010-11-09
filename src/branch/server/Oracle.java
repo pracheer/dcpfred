@@ -177,12 +177,11 @@ public class Oracle extends javax.swing.JFrame {
 		ArrayList<String> inititialConfig = new ArrayList<String>();
 		// inititialConfig.add(serverNameTextField.getText());
 		inititialConfig.add("S01_01");
-		inititialConfig.add("S02_01");
-		// inititialConfig.add("S01_02");
-		// inititialConfig.add("S02_02");
-		// inititialConfig.add("S01_01");
+//		inititialConfig.add("S02_01");
+		inititialConfig.add("S01_02");
+//		inititialConfig.add("S02_02");
+//		inititialConfig.add("S01_01");
 
-		Trxn transaction= null;
 		for (String server : inititialConfig) {
 			String groupid = NodeName.getService(server);
 			View view;
@@ -200,6 +199,12 @@ public class Oracle extends javax.swing.JFrame {
 			// Send all the views to this new server.
 			Set<String> groups = properties_.views_.keySet();
 			for (String group : groups) {
+				
+				// As this view would be part of Broadcast Message to everyone 
+				// including this server. So in order to avoid duplicate messages,
+				// it is being skipped here.
+				if(group.equalsIgnoreCase(groupid))
+					continue;
 				View tmpView = properties_.views_.get(group);
 				SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, tmpView, null, null);
 				msg = new Message(properties_.getNode(), spl);
