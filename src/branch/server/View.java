@@ -14,6 +14,9 @@ public class View {
 	}
 
 	public void addServer(String server) {
+		if(listOfServers.contains(server))
+			return;
+		
 		listOfServers.add(server);
 	}
 
