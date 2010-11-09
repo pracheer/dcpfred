@@ -44,6 +44,10 @@ public class View {
 			return listOfServers.get(index-1);
 	}
 
+	public boolean isEmpty() {
+		return listOfServers.isEmpty();
+	}
+	
 	public String getSuccessor(String server) {
 		int index = listOfServers.indexOf(server);
 		if(index == listOfServers.size() -1)

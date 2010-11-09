@@ -21,20 +21,25 @@ public abstract class NetworkWrapper {
 		properties_ = properties;
 	}
 	
-	public static boolean sendToService(String msg) {
-		String server = properties_.getGroupId();
-		server = "S01";
-		// TODO
+	public static boolean sendToService(String msg, String service) {
+		String server = null;
+		final Topology tpl = properties_.getTopology();
+		if (!tpl.isReachable(service)) {
+			System.err.println("Not reachable : " + destNode.toString());
+			return false;
+		}
+		// TODO testcase
+		server = properties_.views_.get(service).getHead();
 		return send(msg, server);
 	}
 	
-	public static boolean sendToServer(String msg, String destNode) {
+	public static boolean sendToServer(String msg, String server) {
 		// This method is kept for backward compatibility.
-		return send(msg, destNode);
+		return send(msg, server);
 	}
 	
 	public static boolean sendToGui(String msg) {
-		String destNode = "G" + properties_.getGroupId();
+		String destNode = NodeName.getGUI(properties_.getGroupId());
 		return send(msg, destNode);	
 	}
 	

@@ -89,7 +89,7 @@ public class Snapshot {
 	 */
 	public int closeChannel(String srcName) {
 		
-		if (srcName.startsWith("G")) {
+		if (NodeName.isGui(srcName)) {
 			return 1;
 		}
 		if(oChannels.containsKey(srcName)) {

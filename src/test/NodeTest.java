@@ -1,5 +1,5 @@
 package test;
-import branch.server.Node;
+import branch.server.NodeName;
 import junit.framework.TestCase;
 
 /**

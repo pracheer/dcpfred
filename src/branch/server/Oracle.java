@@ -7,7 +7,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -71,7 +73,7 @@ public class Oracle extends javax.swing.JFrame {
 		JButton addServerButton = new JButton();
 		addServerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				snapshotButtonActionPerformed(evt);
+				addServerActionPerformed(evt);
 			}
 		});
 		addServerButton.setText("Add Server");
@@ -79,7 +81,7 @@ public class Oracle extends javax.swing.JFrame {
 		JLabel label = new JLabel();
 		label.setText("Server Name:");
 
-		JFormattedTextField formattedTextField = new JFormattedTextField();
+		serverNameTextField = new JFormattedTextField();
 
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
@@ -96,7 +98,7 @@ public class Oracle extends javax.swing.JFrame {
 										.addGroup(layout.createSequentialGroup()
 												.addComponent(label, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
 												.addPreferredGap(ComponentPlacement.RELATED)
-												.addComponent(formattedTextField, GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+												.addComponent(serverNameTextField, GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
 												.addGap(24)))
 												.addGap(60))
 												.addGroup(layout.createSequentialGroup()
@@ -114,7 +116,7 @@ public class Oracle extends javax.swing.JFrame {
 						.addGap(17)
 						.addGroup(layout.createParallelGroup(Alignment.BASELINE)
 								.addComponent(label, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
-								.addComponent(formattedTextField, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+								.addComponent(serverNameTextField, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
 								.addGap(8)
 								.addGroup(layout.createParallelGroup(Alignment.BASELINE)
 										.addComponent(removeServerButton)
@@ -131,43 +133,77 @@ public class Oracle extends javax.swing.JFrame {
 	private javax.swing.JLabel messageLabel;
 	private javax.swing.JButton removeServerButton;
 	private javax.swing.JTextArea textArea;
+	private javax.swing.JFormattedTextField serverNameTextField;
 	// End of variables declaration
 
 	private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		View view;
+		String server = serverNameTextField.getText();
+		String groupid = NodeName.getService(server);
 
-		//		String defaultAcNo = "00.00000"; 
-		String tempStr="";
-		Trxn transaction= null;
-		Message msg;
-
-		msg = new Message(properties_.getNode(), Message.MsgType.REQ, transaction, null);
-		tempStr = msg.toString();
-
-		boolean sendStatus = bmh_.sendRequest(msg.toString());
-
-		if (sendStatus == false) {
-			textArea.append("Could not connect to server. Unable to process request.\n"+LINE);
-		}
-	}
-	private void snapshotButtonActionPerformed(ActionEvent evt) {
-		Trxn transaction= null;
-		Message msg;
-
-		transaction = new Trxn("SNAPSHOT_MARKER",
-				"000000000000","0.0","00.00000","00.00000","00.00000");
-		msg = new Message(properties_.getNode(),
-				Message.MsgType.REQ,
-				transaction,
-				null);
-
-		boolean sendStatus = bmh_.sendRequest(msg.toString());
-
-		if (sendStatus == false) {
-			textArea.append("Oracle GUI could not get reply from server. Unable to process request.\n"+LINE);
-		}
+		if(properties_.views_.containsKey(groupid)) {
+			view = properties_.views_.get(groupid);
+			if (view.removeServer(server)) {
+				if(view.isEmpty())
+					properties_.views_.remove(groupid);
+				else
+					properties_.views_.put(groupid, view);
+			} 
+			else {
+				// TODO print error
+				textArea.setText("Error: cant find server");
+			}
+		} 
+		else {
+			// TODO error view = new View(groupid);
+			textArea.setText("Error: cant find server");
+		}		
 	}
 
+	private void broadcastView (Message msg) {
+		ArrayList<String> listOfServers = new ArrayList<String>();
+		Set<String> keySet = properties_.views_.keySet();
+		for (String key : keySet) {
+			View view = properties_.views_.get(key);
+			listOfServers.addAll(view.listOfServers);
+			NetworkWrapper.send(msg.toString(), NodeName.getGUI(key));
+			for (String server : listOfServers) {
+				NetworkWrapper.sendToServer(msg.toString(), server);
+			}
+		}
+	}
+	
+	private void addServerActionPerformed(ActionEvent evt) {
+		ArrayList<String> inititialConfig = new ArrayList<String>();
+		inititialConfig.add("S01_01");
+		inititialConfig.add("S02_01");
+		inititialConfig.add("S01_02");
+		inititialConfig.add("S02_02");
+		//		inititialConfig.add("S01_01");
 
+		Trxn transaction= null;
+		for (String server : inititialConfig) {
+			String groupid = NodeName.getService(server);
+			View view;
+			if(properties_.views_.containsKey(groupid))
+				view = properties_.views_.get(groupid);
+			else
+				view = new View(groupid);
+
+			view.addServer(server);
+
+			properties_.views_.put(groupid, view);
+
+			Message msg;
+			SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
+			msg = new Message(properties_.getNode(),
+					Message.MsgType.SPECIAL,
+					null,
+					null,
+					spl);
+			broadcastView(msg);
+		}
+	}
 
 	public static class GuiThread implements Runnable {
 		private Oracle gui_;
@@ -243,19 +279,10 @@ public class Oracle extends javax.swing.JFrame {
 
 				Message msg = Message.parseString(str);
 
-				if(msg.type_ == Message.MsgType.REQ) {
+				if(msg.type_ == Message.MsgType.REQ || msg.type_ == Message.MsgType.RESP ) {
 					// No-one should send a REQ to Oracle GUI.
 					System.err.println("Unexpected message type in Oracle GUI. Ignoring.");
 					continue;
-				} else if (msg.type_ == Message.MsgType.RESP) {
-					// Received a response message.
-					// It can be either a snapshot response (initiated by some other Oracle GUI).
-					// or response to a request from this Oracle GUI.
-					// Print the response to the Oracle GUI text-area.
-					TrxnResponse tResponse = msg.getTrxnResponse();
-
-					// Wake-Up the Oracle GUI if the request was from this Oracle GUI.
-					//bmh_.notifyOfResponse();
 				} else {
 					// Only REQ / RESP type message is expected.
 					System.err.println("Unknown type of message received. Ignoring.");

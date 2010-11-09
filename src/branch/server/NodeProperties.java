@@ -27,7 +27,7 @@ public class NodeProperties {
 	private final int port_;
 	private final boolean isGui_;
 	
-	private static HashMap<String, View> views_ = 
+	public HashMap<String, View> views_ = 
 		new HashMap<String, View>(10);
 	
 	private String groupId_;
@@ -66,7 +66,7 @@ public class NodeProperties {
 			if(topologyFile_.equals("")) {
 				throw new NodePropertiesException("No topology file.");
 			}			
-			topology_ = new Topology(topologyFile_, node_);
+			topology_ = new Topology(topologyFile_, groupId_);
 		} catch (IOException e) {
 			throw new NodePropertiesException(e.getMessage());
 		}

@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import branch.server.FlagParser;
 import branch.server.NetworkWrapper;
-import branch.server.Node;
+import branch.server.NodeName;
 import branch.server.NodeProperties;
 import branch.server.Trxn;
 
@@ -32,13 +32,13 @@ public class Test {
 				int index1 = str.indexOf(Trxn.msgSeparator);
 				int sleepTime = Integer.parseInt(str.substring(0, index1));
 				int index2 = str.indexOf(Trxn.msgSeparator, index1 + Trxn.msgSeparator.length());
-				Integer destNode = Integer.parseInt(str.substring(index1 + Trxn.msgSeparator.length(), index2));
+				String destNode = str.substring(index1 + Trxn.msgSeparator.length(), index2);
 				String msgStr = str.substring(index2 + Trxn.msgSeparator.length());
 				Thread.sleep(sleepTime);
 				args = ("-id "+destNode+" -topology "+properties.topologyFile_+" -servers "+properties.serverLocationFile_).split(" ");
 				NodeProperties properties_ = new NodeProperties(args, true);
 				NetworkWrapper.setProperties(properties_);
-				NetworkWrapper.send(msgStr, "S"+destNode.toString());
+				NetworkWrapper.send(msgStr, NodeName.getServerForService(destNode));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

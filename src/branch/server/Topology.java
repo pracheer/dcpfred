@@ -20,12 +20,12 @@ import java.util.ArrayList;
 
 public class Topology {
 	public static class Connection {
-		String src_;
-		String dest_;
+		String srcService_;
+		String destService_;
 
 		public Connection() {
-			src_ = null;
-			dest_ = null;
+			srcService_ = null;
+			destService_ = null;
 		}
 
 		// Parses string of the form, JVM1 JVM2
@@ -33,30 +33,30 @@ public class Topology {
 		public void parseString(String str) {
 			int spaceAt = str.indexOf(' ');
 
-			src_ = str.substring(0, spaceAt);
-			dest_ = str.substring(spaceAt + 1);
+			srcService_ = str.substring(0, spaceAt);
+			destService_ = str.substring(spaceAt + 1);
 		}
 
 		public String getSourceString() {
-			return src_.toString();
+			return srcService_.toString();
 		}
 
 		public String getDestinationString() {
-			return dest_.toString();
+			return destService_.toString();
 		}
 	}
 
 	final private ArrayList<Connection> connections_;
 	final private ArrayList<String> inNeighbors_;
 	final private ArrayList<String> outNeighbors_;
-	final private String node_;
+	final private String group_;
 
-	public Topology(String topologyFileLocation, String node) throws IOException {
+	public Topology(String topologyFileLocation, String group) throws IOException {
 		FileReader fr = null;
 		try {
 			fr = new FileReader(new File(topologyFileLocation));
-		} catch (FileNotFoundException fe) {
-			throw new IOException(fe.getMessage());
+		} catch (FileNotFoundException e) {
+			throw new IOException(e.getMessage());
 		}
 
 		connections_ = new ArrayList<Connection>();
@@ -75,26 +75,29 @@ public class Topology {
 		in.close();
 		fr.close();
 
-		node_ = node;
-		inNeighbors_ = whoInNeighbors(node);
-		outNeighbors_ = whoOutNeighbors(node);
+		group_ = group;
+		inNeighbors_ = whoInNeighbors(group);
+		outNeighbors_ = whoOutNeighbors(group);
 	}
 
-	public boolean isReachable(String dest) {
-		String nodeString = node_;
-		if (node_.startsWith("G") && (node_.substring(1,3).equals(dest.substring(1, 3))))
+	public boolean isReachable(String nodeName) {
+		String destService = NodeName.getService(nodeName);
+		if(destService.equalsIgnoreCase(group_))
 			return true;
-		if (dest.startsWith("G") && (node_.substring(1,3).equals(dest.substring(1, 3))))
-			return true;
+
 		for (int i = 0; i < connections_.size(); ++i) {
 			final Connection con = connections_.get(i);
 
-			if (con.getSourceString().equalsIgnoreCase(nodeString) &&
-					con.getDestinationString().equalsIgnoreCase(dest)) {
+			if (con.getSourceString().equalsIgnoreCase(group_) &&
+					con.getDestinationString().equalsIgnoreCase(destService)) {
+				return true;
+			}
+			// To insure bidirectional connection
+			if (con.getSourceString().equalsIgnoreCase(destService) &&
+					con.getDestinationString().equalsIgnoreCase(group_)) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 

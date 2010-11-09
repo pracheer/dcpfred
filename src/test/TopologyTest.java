@@ -43,7 +43,7 @@ public class TopologyTest extends TestCase {
 	protected Topology createTopologyFile(String filePath, String node, String group) {
 		Topology tpl = null;
 		try {
-			tpl = new Topology(tempFile_.getAbsolutePath(), node);
+			tpl = new Topology(tempFile_.getAbsolutePath(), group);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
