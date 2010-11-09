@@ -8,30 +8,56 @@ public class SpecialMsg {
 		REGISTER, SYNC, VIEW
 	}
 
-	Type type;
-	View view;
-	Register register;
-	Sync sync;
+	Type type_;
+	View view_;
+	Register register_;
+	Sync sync_;
 	
 	public SpecialMsg(Type type, View view, Register register, Sync sync) {
 		super();
-		this.type = type;
-		this.view = view;
-		this.register = register;
-		this.sync = sync;
+		this.type_ = type;
+		this.view_ = view;
+		this.register_ = register;
+		this.sync_ = sync;
+	}
+	
+	public SpecialMsg(View view) {
+		view_ = view;
+		type_ = Type.VIEW;
+		sync_ = null;
+		register_ = null;
+	}
+	
+	public SpecialMsg(Sync sync) {
+		sync_ = sync;
+		type_ = Type.SYNC;
+		view_ = null;
+		register_ = null;
+	}
+		
+	public SpecialMsg.Type getType() {
+		return type_;
+	}
+	
+	public View getView() {
+		return view_;
+	}
+	
+	public Sync getSync() {
+		return sync_;
 	}
 
 	public String toString() {
-		String str = type.toString() + msgSeparator;
-		switch (type) {
+		String str = type_.toString() + msgSeparator;
+		switch (type_) {
 		case REGISTER:
-			str += register.toString();
+			str += register_.toString();
 			break;
 		case SYNC:
-			str += sync.toString();
+			str += sync_.toString();
 			break;
 		case VIEW:
-			str += view.toString();
+			str += view_.toString();
 		}
 
 		return str;

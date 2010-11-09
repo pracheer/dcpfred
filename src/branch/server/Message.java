@@ -20,7 +20,7 @@ public class Message {
 	TrxnResponse trxnResponse_ = null;
 
 	// Only relevant for Special message.
-	SpecialMsg specialMsg = null;
+	SpecialMsg specialMsg_ = null;
 
 	public static Message parseString(String str) {
 		return new Message(str);
@@ -32,6 +32,14 @@ public class Message {
 		this.type_ = type;
 		this.trxn_ = trxn;
 		this.trxnResponse_ = trxnResp;
+	}
+	
+	public Message(String sourceNode, SpecialMsg msg) {
+		this.srcNode_ = sourceNode;
+		this.type_ = MsgType.SPECIAL;
+		this.trxn_ = null;
+		this.trxnResponse_ = null;
+		this.specialMsg_ = msg;	
 	}
 
 	/**
@@ -61,7 +69,7 @@ public class Message {
 					.substring(index2 + Trxn.msgSeparator.length()));
 			break;			
 		case SPECIAL:
-			specialMsg = SpecialMsg.parseString(str.substring(index2
+			specialMsg_ = SpecialMsg.parseString(str.substring(index2
 					+ Trxn.msgSeparator.length()));
 		}
 	}
@@ -80,7 +88,7 @@ public class Message {
 			str += trxnResponse_.toString();
 			break;
 		case SPECIAL:
-			str += specialMsg.toString();
+			str += specialMsg_.toString();
 		}
 		
 		return str;
@@ -115,7 +123,7 @@ public class Message {
 	}
 
 	public SpecialMsg getSpecialMsg() {
-		return specialMsg;
+		return specialMsg_;
 	}
 	
 	/**

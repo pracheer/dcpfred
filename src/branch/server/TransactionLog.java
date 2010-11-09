@@ -27,4 +27,13 @@ public class TransactionLog {
 			return null;
 		
 	}
+	
+	public static HashMap<String, Trxn> getAllTransactions() {
+		// TODO
+		return null;
+	}
+	
+	public static void synchronizeTransactions(Sync sync) {
+		// TODO
+	}
 }

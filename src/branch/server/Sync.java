@@ -6,36 +6,29 @@ import java.util.Set;
 public class Sync {
 
 	private static String msgSeparator = ":;:";
+	HashMap<String, Double> accountDetails_;
+	HashMap<String, Trxn> trxnLog_;
 	
-	String src;
-	String dest;
-	HashMap<String, Double> accountDetails;
-	HashMap<String, Trxn> trxnLog;
-	
-	public Sync(String src, String dest,
+	public Sync(
 			HashMap<String, Double> accountDetails,
 			HashMap<String, Trxn> trxnLog) {
-		super();
-		this.src = src;
-		this.dest = dest;
-		this.accountDetails = accountDetails;
-		this.trxnLog = trxnLog;
+		accountDetails_ = accountDetails;
+		trxnLog_ = trxnLog;
 	}
 	
 	public String toString() {
+		String str = "";
 		
-		String str = src + msgSeparator + dest + msgSeparator;
-		
-		str += msgSeparator + accountDetails.size();
-		Set<String> keys = accountDetails.keySet();
+		str += msgSeparator + accountDetails_.size();
+		Set<String> keys = accountDetails_.keySet();
 		for (String key : keys) {
-			str += msgSeparator + key + msgSeparator + accountDetails.get(key);
+			str += msgSeparator + key + msgSeparator + accountDetails_.get(key);
 		}
 		
-		str += msgSeparator + trxnLog.size();
-		keys = trxnLog.keySet();
+		str += msgSeparator + trxnLog_.size();
+		keys = trxnLog_.keySet();
 		for (String key : keys) {
-			str += msgSeparator + key + msgSeparator + trxnLog.get(key);
+			str += msgSeparator + key + msgSeparator + trxnLog_.get(key);
 		}
 		
 		return str;
@@ -45,10 +38,7 @@ public class Sync {
 		String[] parts = str.split(msgSeparator);
 		
 		int index = 0;
-		
-		String src = parts[index++];
-		String dest = parts[index++];
-		
+
 		int accountCount = Integer.parseInt(parts[index++]);
 		HashMap<String, Double> accountDetails = new HashMap<String, Double>(accountCount);
 		for (int i = 0; i < accountCount; i++) {
@@ -65,6 +55,6 @@ public class Sync {
 			trxnLog.put(account, trxn);
 		}
 		
-		return new Sync(src, dest, accountDetails, trxnLog);
+		return new Sync(accountDetails, trxnLog);
 	}
 }

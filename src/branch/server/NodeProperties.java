@@ -39,7 +39,6 @@ public class NodeProperties {
 		HEAD,
 		MIDDLE,
 		TAIL,
-		HEAD_AND_TAIL,
 	}
 	
 	private ServerState serverState_;  
@@ -177,6 +176,14 @@ public class NodeProperties {
 		View myView = views_.get(node_);
 		
 		return myView;
+	}
+	
+	public void updateView(View view) {
+		views_.put(view.getGroupId(), view);
+	}
+	
+	public void updateState(ServerState state) {
+		serverState_ = state;
 	}
 
 	public String print() {
