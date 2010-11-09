@@ -110,7 +110,8 @@ public class BranchGUI extends javax.swing.JFrame {
 			}
 		});
 		snapshotButton.setText("SNAPSHOT");
-		
+		snapshotButton.setVisible(false);
+		snapshotButton.setEnabled(false);		
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
 				getContentPane());
@@ -535,26 +536,26 @@ public class BranchGUI extends javax.swing.JFrame {
 		serialNumTextField.setText(giveNextSerNum());
 	}
 	private void snapshotButtonActionPerformed(ActionEvent evt) {
-		Trxn transaction= null;
-		Message msg;
+//		Trxn transaction= null;
+//		Message msg;
 		
-		String snapshotId  = null;
-		snapshotCounter_ += 1;
-		snapshotId = "S"
-			+ String.format("%02d", properties_.getGroupId())
-			+ String.format("%08d", snapshotCounter_);
-		transaction = new Trxn("SNAPSHOT_MARKER",
-				snapshotId,"0.0","00.00000","00.00000","00.00000");
-		msg = new Message(properties_.getNode(),
-				Message.MsgType.REQ,
-				transaction,
-				null);
-		
-		boolean sendStatus = bmh_.sendRequest(msg.toString());
-		
-		if (sendStatus == false) {
-			textArea.append("GUI could not get reply from server. Unable to process request.\n"+LINE);
-		}
+//		String snapshotId  = null;
+//		snapshotCounter_ += 1;
+//		snapshotId = "S"
+//			+ String.format("%02d", properties_.getGroupId())
+//			+ String.format("%08d", snapshotCounter_);
+//		transaction = new Trxn("SNAPSHOT_MARKER",
+//				snapshotId,"0.0","00.00000","00.00000","00.00000");
+//		msg = new Message(properties_.getNode(),
+//				Message.MsgType.REQ,
+//				transaction,
+//				null);
+//		
+//		boolean sendStatus = bmh_.sendRequest(msg.toString());
+//		
+//		if (sendStatus == false) {
+//			textArea.append("GUI could not get reply from server. Unable to process request.\n"+LINE);
+//		}
 	}
 
 	public void printUserString (TrxnResponse tr)	
