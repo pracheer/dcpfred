@@ -73,11 +73,7 @@ public class MsgProcessingThread extends Thread {
 						tm.processTransaction());
 
 				// Reply the GUI if the request came from him.
-				/*
-				if (msg.getTrxn().getSerialNum().substring(1,3).equalsIgnoreCase(properties.getGroupId())) {
-					NetworkWrapper.sendToGui(responseMessage.toString());
-				}
-				*/
+				final boolean isRequestFromGui = msg.getTrxn().getSerialNum().substring(1,3).equalsIgnoreCase(properties.getGroupId());
 				NodeProperties.ServerState myState = properties.getState();
 				View myView = properties.getView();
 				
@@ -85,7 +81,7 @@ public class MsgProcessingThread extends Thread {
 						myState == NodeProperties.ServerState.MIDDLE) {
 					String nextNode = myView.getSuccessor(properties.getNode());
 					NetworkWrapper.sendToServer(nextNode, msg.toString());
-				} else if (myState == NodeProperties.ServerState.TAIL) {
+				} else if (myState == NodeProperties.ServerState.TAIL && isRequestFromGui) {
 					NetworkWrapper.sendToGui(responseMessage.toString());
 				} else {
 					System.err.println("Server does not have a valid state.");
