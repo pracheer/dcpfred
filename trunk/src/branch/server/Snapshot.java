@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
 
 import branch.server.Trxn.TransxType;
 
@@ -35,8 +34,8 @@ public class Snapshot {
 		NodeProperties properties = BranchServer.getProperties();
 		/* reading topology info */
 		final Topology tpl = BranchServer.getProperties().getTopology();
-		Vector<String> outNeighbors = tpl.getOutNeighbors();
-		Vector<String> inNeighbors = tpl.getInNeighbors();
+		ArrayList<String> outNeighbors = tpl.getOutNeighbors();
+		ArrayList<String> inNeighbors = tpl.getInNeighbors();
 
 		/* Inititiating variables */
 		this.snapshotId_ = Id;
