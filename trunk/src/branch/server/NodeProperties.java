@@ -30,6 +30,15 @@ public class NodeProperties {
 	private String serverLocationFile_;
 	private Integer sleep_ = 0; // sleep time in milliseconds
 	
+	public static enum ServerState {
+		HEAD,
+		MIDDLE,
+		TAIL,
+		HEAD_AND_TAIL,
+	}
+	
+	private ServerState serverState_;  
+	
 	public static class NodePropertiesException extends Exception {
 		public NodePropertiesException(String error) {
 			super(error);
@@ -145,8 +154,12 @@ public class NodeProperties {
 		return serverLocationFile_;
 	}
 
-	public Integer getSleep_() {
+	public Integer getSleep() {
 		return sleep_;
+	}
+	
+	public ServerState getState() {
+		return serverState_;
 	}
 
 	public String print() {

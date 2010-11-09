@@ -82,8 +82,11 @@ public class MsgProcessingThread extends Thread {
 							sn.updateSnapshot(msg);
 						}
 					}
-				}		
+				}
 			}
+			
+			// TODO
+			// Message type = UPDATE_VIEW
 		}
 	}
 }
