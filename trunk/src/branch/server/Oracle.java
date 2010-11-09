@@ -222,7 +222,7 @@ public class Oracle extends javax.swing.JFrame {
 			serverSocket = new ServerSocket(properties_.getPort());
 		} catch (IOException e){
 			System.err.println(
-					"Coult not listen to port: " + properties_.getPort());
+					"Could not listen to port: " + properties_.getPort());
 			//System.exit(1);
 		}
 
@@ -255,7 +255,7 @@ public class Oracle extends javax.swing.JFrame {
 					TrxnResponse tResponse = msg.getTrxnResponse();
 
 					// Wake-Up the Oracle GUI if the request was from this Oracle GUI.
-					bmh_.notifyOfResponse();
+					//bmh_.notifyOfResponse();
 				} else {
 					// Only REQ / RESP type message is expected.
 					System.err.println("Unknown type of message received. Ignoring.");
