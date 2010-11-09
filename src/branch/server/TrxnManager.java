@@ -120,5 +120,19 @@ public class TrxnManager {
 		trxnResponse = new TrxnResponse(trxn_.getSerialNum(), TrxnResponse.Type.TRANSACTION, balance, false, "");
 		return trxnResponse;
 	}
+	
+	public String getSyncMessage() {
+		String msg = "";
+		
+		// TODO
+		
+		return msg;
+	}
+	
+	public void updateForSyncMessage(String msg) {
+		// TODO
+	}
+	
+	
 
 }
