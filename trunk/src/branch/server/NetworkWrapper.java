@@ -28,9 +28,9 @@ public abstract class NetworkWrapper {
 		return send(msg, server);
 	}
 	
-	public static boolean sendToServer(String msg) {
-		String server = properties_.getGroupId();
-		return send(msg, server);	
+	public static boolean sendToServer(String msg, String destNode) {
+		// This method is kept for backward compatibility.
+		return send(msg, destNode);
 	}
 	
 	public static boolean sendToGui(String msg) {

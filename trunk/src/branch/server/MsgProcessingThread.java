@@ -24,6 +24,8 @@ public class MsgProcessingThread extends Thread {
 	}
 
 	public void run() {
+		NodeProperties properties = BranchServer.getProperties();
+
 		while (true) {
 			// will block if the queue is empty.
 			Message msg = messages_.getMsg();
@@ -36,7 +38,7 @@ public class MsgProcessingThread extends Thread {
 				// Useful to test snapshots.
 				if(!snapshots.containsKey(snapshotId)) {
 					try {
-						sleep(BranchServer.getProperties().getSleepTime());
+						sleep(properties.getSleepTime());
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -55,7 +57,7 @@ public class MsgProcessingThread extends Thread {
 					// Send the completed snapshot response to the GUI for display.
 					System.out.println(snapshot.print());
 					Message responseMessage = new Message(
-							BranchServer.getProperties().getNode(),
+							properties.getNode(),
 							Message.MsgType.RESP,
 							null,
 							new TrxnResponse(snapshotId, TrxnResponse.Type.SNAPSHOT, snapshot.print()));
@@ -65,14 +67,29 @@ public class MsgProcessingThread extends Thread {
 				/* Process the transaction request */
 				TrxnManager tm = new TrxnManager(msg.getTrxn());
 				Message responseMessage = new Message(
-						BranchServer.getProperties().getNode(),
+						properties.getNode(),
 						Message.MsgType.RESP,
 						null,
 						tm.processTransaction());
 
 				// Reply the GUI if the request came from him.
-				if (msg.getTrxn().getSerialNum().substring(1,3).equalsIgnoreCase(BranchServer.getProperties().getGroupId())) {
+				/*
+				if (msg.getTrxn().getSerialNum().substring(1,3).equalsIgnoreCase(properties.getGroupId())) {
 					NetworkWrapper.sendToGui(responseMessage.toString());
+				}
+				*/
+				NodeProperties.ServerState myState = properties.getState();
+				View myView = properties.getView();
+				
+				if (myState == NodeProperties.ServerState.HEAD ||
+						myState == NodeProperties.ServerState.MIDDLE) {
+					String nextNode = myView.getSuccessor(properties.getNode());
+					NetworkWrapper.sendToServer(nextNode, msg.toString());
+				} else if (myState == NodeProperties.ServerState.HEAD_AND_TAIL ||
+						myState == NodeProperties.ServerState.TAIL) {
+					NetworkWrapper.sendToGui(responseMessage.toString());
+				} else {
+					System.err.println("Server does not have a valid state.");
 				}
 
 				// update all snapshots with this msg
