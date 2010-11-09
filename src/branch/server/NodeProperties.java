@@ -31,6 +31,10 @@ public class NodeProperties {
 		new HashMap<String, View>(10);
 	
 	private String groupId_;
+	public void setGroupId_(String groupId_) {
+		this.groupId_ = groupId_;
+	}
+
 	private String topologyFile_;
 	private String serverLocationFile_;
 	private Integer sleep_ = 0; // sleep time in milliseconds

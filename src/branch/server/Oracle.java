@@ -198,6 +198,7 @@ public class Oracle extends javax.swing.JFrame {
 			SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
 			msg = new Message(properties_.getNode(), spl);
 			broadcastView(msg);
+			textArea.append(view.toString() + "\n");
 		}
 	}
 
@@ -223,7 +224,6 @@ public class Oracle extends javax.swing.JFrame {
 			e.printStackTrace();
 			System.err.println("Unable to parse CLI for Oracle GUI");
 		}
-
 		NetworkWrapper.setProperties(properties_);
 
 		// Match the IP of the current machine with the IP provided in 'servers'

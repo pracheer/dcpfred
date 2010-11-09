@@ -16,7 +16,7 @@ public class NodeName {
 			return getServiceForGUI(node);
 		else if(node.startsWith("S"))
 			return getServiceForServer(node);
-		return null;
+		return node;
 	}
 	
 	public static String getGUI(String node) {
