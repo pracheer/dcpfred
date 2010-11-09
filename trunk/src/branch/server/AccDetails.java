@@ -52,11 +52,10 @@ public class AccDetails {
 	}
 
 	public static synchronized HashMap<String,Double> getAllAccnts() {
-		// TODO
-		return accountDetails;
+		return (HashMap<String, Double>)accountDetails.clone();
 	}
 	
 	public static synchronized void synchronizeAccounts(Sync sync) {
-		// TODO
+		accountDetails = sync.getAccountDetails();
 	}
 }

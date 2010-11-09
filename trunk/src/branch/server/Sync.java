@@ -6,8 +6,8 @@ import java.util.Set;
 public class Sync {
 
 	private static String msgSeparator = ":;:";
-	HashMap<String, Double> accountDetails_;
-	HashMap<String, Trxn> trxnLog_;
+	private HashMap<String, Double> accountDetails_;
+	private HashMap<String, Trxn> trxnLog_;
 	
 	public Sync(
 			HashMap<String, Double> accountDetails,
@@ -56,5 +56,13 @@ public class Sync {
 		}
 		
 		return new Sync(accountDetails, trxnLog);
+	}
+
+	public HashMap<String, Double> getAccountDetails() {
+		return accountDetails_;
+	}
+
+	public HashMap<String, Trxn> getTransactionLogs() {
+		return trxnLog_;
 	}
 }
