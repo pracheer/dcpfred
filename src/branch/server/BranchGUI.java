@@ -597,7 +597,7 @@ public class BranchGUI extends javax.swing.JFrame {
 					
 					// Even if we fail to connect to the head, we keep on retrying.
 					// As it could be the case that head is the server that went down.
-					NetworkWrapper.sendToService(msg);
+					NetworkWrapper.sendToService(msg, properties_.getGroupId());
 
 					Thread.sleep(waitingTime_);
 				}

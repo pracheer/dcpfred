@@ -25,7 +25,7 @@ public abstract class NetworkWrapper {
 		String server = null;
 		final Topology tpl = properties_.getTopology();
 		if (!tpl.isReachable(service)) {
-			System.err.println("Not reachable : " + destNode.toString());
+			System.err.println("Not reachable : " + service.toString());
 			return false;
 		}
 		// TODO testcase

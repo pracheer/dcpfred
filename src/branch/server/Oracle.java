@@ -196,11 +196,7 @@ public class Oracle extends javax.swing.JFrame {
 
 			Message msg;
 			SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
-			msg = new Message(properties_.getNode(),
-					Message.MsgType.SPECIAL,
-					null,
-					null,
-					spl);
+			msg = new Message(properties_.getNode(), spl);
 			broadcastView(msg);
 		}
 	}

@@ -27,12 +27,12 @@ public class Message {
 	}
 
 	public Message(String sourceNode, MsgType type,
-			Trxn trxn, TrxnResponse trxnResp, SpecialMsg spl) {
+			Trxn trxn, TrxnResponse trxnResp) {
 		this.srcNode_ = sourceNode;
 		this.type_ = type;
 		this.trxn_ = trxn;
 		this.trxnResponse_ = trxnResp;
-		this.specialMsg_ = spl;
+
 	}
 	
 	public Message(String sourceNode, SpecialMsg msg) {
