@@ -26,8 +26,6 @@ import java.util.HashMap;
 
 public class BranchServer {
 	private static NodeProperties properties_;
-	private static HashMap<String, View> views_ = 
-		new HashMap<String, View>(10);
 	public static NodeProperties getProperties() {
 		return properties_;
 	}

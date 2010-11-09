@@ -31,10 +31,7 @@ public class Oracle extends javax.swing.JFrame {
 	public static final String LINE = "---------------------------------------------------------------------------------------------\n";
 	private static NodeProperties properties_;
 
-	private static BlockingMessageHandler bmh_;
-	private static HashMap<String, View> views_ = 
-		new HashMap<String, View>(10);
-
+	
 	/** Creates new form BranchGUI */
 	public Oracle() {
 		super(ORACLE);
@@ -171,26 +168,6 @@ public class Oracle extends javax.swing.JFrame {
 	}
 
 
-	public static class BlockingMessageHandler {
-		synchronized boolean sendRequest(String msg) {
-			if (!NetworkWrapper.sendToServer(msg)) {
-				return false;
-			}
-
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(e.getMessage());
-				e.printStackTrace();
-			}
-
-			return true;
-		}
-
-		synchronized void notifyOfResponse() {
-			notify();
-		}
-	}
 
 	public static class GuiThread implements Runnable {
 		private Oracle gui_;
@@ -205,9 +182,7 @@ public class Oracle extends javax.swing.JFrame {
 	}
 
 	public static void main(String args[]) {
-		// The Oracle should wait for a response of the sent request to arrive from the server.
-		// 'bmh_' is used to keep the listening-thread synchronized with the Oracle GUI thread.
-		bmh_ = new BlockingMessageHandler();
+		
 		ServerSocket serverSocket = null;
 
 		try {
