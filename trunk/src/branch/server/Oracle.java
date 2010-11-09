@@ -167,9 +167,9 @@ public class Oracle extends javax.swing.JFrame {
 			View view = properties_.views_.get(key);
 			listOfServers.addAll(view.listOfServers);
 			NetworkWrapper.send(msg.toString(), NodeName.getGUI(key));
-			for (String server : listOfServers) {
-				NetworkWrapper.sendToServer(msg.toString(), server);
-			}
+		}
+		for (String server : listOfServers) {
+			NetworkWrapper.sendToServer(msg.toString(), server);
 		}
 	}
 	
@@ -196,6 +196,17 @@ public class Oracle extends javax.swing.JFrame {
 			properties_.views_.put(groupid, view);
 
 			Message msg;
+			
+			// Send all the views to this new server.
+			Set<String> groups = properties_.views_.keySet();
+			for (String group : groups) {
+				View tmpView = properties_.views_.get(group);
+				SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, tmpView, null, null);
+				msg = new Message(properties_.getNode(), spl);
+				NetworkWrapper.sendToServer(msg.toString(), server);
+			}
+			
+			// Sending the new view to EVERYONE
 			SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
 			msg = new Message(properties_.getNode(), spl);
 			broadcastView(msg);
