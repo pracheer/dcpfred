@@ -84,10 +84,12 @@ public class BranchServer {
 		MsgProcessingThread tThread = new MsgProcessingThread(messages);
 		tThread.start();
 
-		// registering with Oracle.
+		/*// registering with Oracle.
 		ArrayList<String> neighbors = new ArrayList<String>();
 		Collections.copy(neighbors, properties_.getTopology().getOutNeighbors());
 		new Register(properties_.getNode(), properties_.getGroupId(), neighbors);
+		*/
+		
 		// Server starts listening.
 		while (true) {
 			try {
