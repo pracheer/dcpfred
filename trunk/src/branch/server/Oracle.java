@@ -148,15 +148,23 @@ public class Oracle extends javax.swing.JFrame {
 					properties_.views_.remove(groupid);
 				else
 					properties_.views_.put(groupid, view);
+				
+				// Sending the new view to EVERYONE
+				// TODO the server is still ON. 
+				//what does it do when it does not find itself in the view.
+				SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
+				Message msg = new Message(properties_.getNode(), spl);
+				broadcastView(msg);
+				textArea.append(view.toString() + "\n");
 			} 
 			else {
 				// TODO print error
-				textArea.setText("Error: cant find server");
+				textArea.setText("Error: can't find server");
 			}
 		} 
 		else {
 			// TODO error view = new View(groupid);
-			textArea.setText("Error: cant find server");
+			textArea.setText("Error: can't find server");
 		}		
 	}
 
