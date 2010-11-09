@@ -111,7 +111,7 @@ public class TrxnManager {
 			Message msg = new Message(BranchServer.getProperties().getNode(),
 					Message.MsgType.REQ, trxn_, null);
 
-			if (!NetworkWrapper.send(msg.toString(), destinationGrp)) {
+			if (!NetworkWrapper.sendToService(msg.toString(), destinationGrp)) {
 				System.err.println("Not able to send message to destination Server.");
 			}
 		}
