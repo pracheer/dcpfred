@@ -13,10 +13,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public abstract class NetworkWrapper {
-	private static NodeProperties properties_ = null;
-	private static final int maxRetry_ = 5;
-	private static int[] retryGaps_ = {2, 4, 8, 16, 32};
-	
+	private static NodeProperties properties_ = null;	
+
 	public static void setProperties(NodeProperties properties) {
 		properties_ = properties;
 	}
@@ -63,30 +61,19 @@ public abstract class NetworkWrapper {
 		if (destSocket == null) {
 			return false;
 		}
-		
 		boolean success = false;
-		
-		for (int i = 0; i < maxRetry_ && !success; ++i) {
-			try {
-				PrintWriter out = new PrintWriter(destSocket.getOutputStream(), true);
-				out.println(msg);
-				success = true;
-			} catch (IOException e) {
-				try {
-					Thread.sleep(retryGaps_[i]);
-				} catch (InterruptedException ie) {
-					System.err.println(ie.getMessage());
-				}
-			}
-		}
 
 		try {
+			PrintWriter out = new PrintWriter(destSocket.getOutputStream(), true);
+			out.println(msg);
+			out.close();
 			destSocket.close();
+			success = true;
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-			e.printStackTrace();
 		}
 		
+
 		return success;
 	}
 
