@@ -717,7 +717,6 @@ public class BranchGUI extends javax.swing.JFrame {
 							bmh_.notifyOfResponse();
 						}
 					} else {
-						System.out.println("notifying...");
 						// Wake-Up the GUI if the request was from this GUI.
 						bmh_.notifyOfResponse();
 					}
