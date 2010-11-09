@@ -3,6 +3,7 @@ package branch.server;
 public class SpecialMsg {
 
 	private static String msgSeparator = ";;";
+	
 	enum Type {
 		REGISTER, SYNC, VIEW
 	}
@@ -36,7 +37,7 @@ public class SpecialMsg {
 		return str;
 	}
 
-	public SpecialMsg parseString(String str) {
+	public static SpecialMsg parseString(String str) {
 		String[] parts = str.split(msgSeparator);
 		Type type = Type.valueOf(parts[0]);
 		Register register = null;

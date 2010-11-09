@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Sync {
 
-	private static String msgSeparator = ":::";
+	private static String msgSeparator = ":;:";
 	
 	String src;
 	String dest;
