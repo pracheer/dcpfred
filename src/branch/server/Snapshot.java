@@ -58,7 +58,7 @@ public class Snapshot {
 		Message newMsg = new Message(properties.getNode(), Message.MsgType.REQ, newTrxn, null);
 
 		for (String outNeighbor : outNeighbors) {
-			if (!NetworkWrapper.send(newMsg.toString(), outNeighbor)) {
+			if (!NetworkWrapper.sendToService(newMsg.toString(), outNeighbor)) {
 				System.err.println("Not able to send markers on outgoing channels.");
 			}
 		}
