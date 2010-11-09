@@ -25,6 +25,9 @@ public class NodeProperties {
 	private final int port_;
 	private final boolean isGui_;
 	
+	private static HashMap<String, View> views_ = 
+		new HashMap<String, View>(10);
+	
 	private String groupId_;
 	private String topologyFile_;
 	private String serverLocationFile_;
