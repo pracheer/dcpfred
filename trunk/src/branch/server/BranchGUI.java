@@ -326,7 +326,7 @@ public class BranchGUI extends javax.swing.JFrame {
 			return "Format should be [DWTQ] + branchID + 8 digit integer." ;
 		}
 		
-		if (!BranchGUI.properties_.getGroupId().equals(NodeName.getService(str)))
+		if (!BranchGUI.properties_.getGroupId().equals(str.substring(1,3)))
 			return "Format should be [DWTQ] + branchID + 8 digit integer. BranchId specified is not this branch" ;
 		
 		if (depositButton.isSelected() && str.charAt(0)!= 'D') {
