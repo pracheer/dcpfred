@@ -66,7 +66,7 @@ public class NodeProperties {
 			if(topologyFile_.equals("")) {
 				throw new NodePropertiesException("No topology file.");
 			}			
-			topology_ = new Topology(topologyFile_, node_, groupId_);
+			topology_ = new Topology(topologyFile_, node_);
 		} catch (IOException e) {
 			throw new NodePropertiesException(e.getMessage());
 		}
