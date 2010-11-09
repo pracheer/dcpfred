@@ -25,7 +25,7 @@ public abstract class NetworkWrapper {
 		String server = properties_.getGroupId();
 		server = "S01";
 		// TODO
-		return send(msg, server);	
+		return send(msg, server);
 	}
 	
 	public static boolean sendToServer(String msg) {

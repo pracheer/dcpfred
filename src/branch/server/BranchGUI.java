@@ -579,23 +579,47 @@ public class BranchGUI extends javax.swing.JFrame {
 	}
 
 	public static class BlockingMessageHandler {
-		synchronized boolean sendRequest(String msg) {
-			if (!NetworkWrapper.sendToService(msg)) {
-				return false;
-			}
-			
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(e.getMessage());
-				e.printStackTrace();
-			}
-			
-			return true;
+		private	Thread toWakeUp_;
+		private int waitingTime_;
+		private static final int INITIAL_WAITING_TIME = 100;
+		
+		public BlockingMessageHandler() {
+			initialize();			
 		}
 		
-		synchronized void notifyOfResponse() {
-			notify();
+		private void initialize() {
+			toWakeUp_ = null;
+			waitingTime_ = INITIAL_WAITING_TIME;
+		}
+
+		boolean sendRequest(String msg) {
+			try {
+				toWakeUp_ = Thread.currentThread();
+				while (true) {
+					waitingTime_ *= 2;
+					
+					// Even if we fail to connect to the head, we keep on retrying.
+					// As it could be the case that head is the server that went down.
+					NetworkWrapper.sendToService(msg);
+
+					Thread.sleep(waitingTime_);
+				}
+			} catch (InterruptedException e) {
+				// The wait of the GUI was interrupted by the receiving thread.
+				// Message was sent and response was received successfully.
+				System.out.println("Response received.");
+				return true;
+			} finally {
+				initialize();
+			}
+		}
+		
+		void notifyOfResponse() {
+			// notifyOfResponse is called. That means the GUI thread should be waiting.
+			// The case toWakeUp == null should never occur.
+			if (toWakeUp_ != null) {
+				toWakeUp_.interrupt();
+			}
 		}
 	}
 	
@@ -661,7 +685,6 @@ public class BranchGUI extends javax.swing.JFrame {
 		BranchGUI branchGUI = new BranchGUI();
 		GuiThread guiThread = new GuiThread(branchGUI);
 		java.awt.EventQueue.invokeLater(guiThread);
-		
 		System.out.println(properties_.print());
 		
 		// GUI starts listening.
@@ -697,6 +720,7 @@ public class BranchGUI extends javax.swing.JFrame {
 							bmh_.notifyOfResponse();
 						}
 					} else {
+						System.out.println("notifying...");
 						// Wake-Up the GUI if the request was from this GUI.
 						bmh_.notifyOfResponse();
 					}
