@@ -32,7 +32,7 @@ public class TransactionLog {
 		return (HashMap<String, Trxn>) trxnLog.clone();
 	}
 	
-	public static void synchronizeTransactions(Sync sync) {
+	public static void synchronizeTransactionLog(Sync sync) {
 		trxnLog = sync.getTransactionLogs();
 	}
 }
