@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import branch.server.Node;
+import branch.server.NodeName;
 import branch.server.NodeLocations;
 import branch.server.NodeProperties;
 import branch.server.Topology;
