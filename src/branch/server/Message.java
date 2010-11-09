@@ -19,6 +19,9 @@ public class Message {
 	// Only relevant for response type message.
 	TrxnResponse trxnResponse_ = null;
 
+	// Only relevant for Special message.
+	SpecialMsg specialMsg = null;
+
 	public static Message parseString(String str) {
 		return new Message(str);
 	}
@@ -48,22 +51,39 @@ public class Message {
 
 		srcNode_ = str.substring(index1 + Trxn.msgSeparator.length(), index2);
 
-		if (type_ == MsgType.REQ)
+		switch (type_) {
+		case REQ:
 			trxn_ = Trxn.parseString(str.substring(index2
 					+ Trxn.msgSeparator.length()));
-		else if (type_ == MsgType.RESP)
+			break;
+		case RESP:
 			trxnResponse_ = TrxnResponse.parseString(str
 					.substring(index2 + Trxn.msgSeparator.length()));
+			break;			
+		case SPECIAL:
+			specialMsg = SpecialMsg.parseString(str.substring(index2
+					+ Trxn.msgSeparator.length()));
+		}
 	}
 
 	// Creates String representation of message object.
 	public String toString() {
-		return type_
+		String str = type_
 		+ Trxn.msgSeparator
 		+ srcNode_
-		+ Trxn.msgSeparator
-		+ (type_ == MsgType.REQ ? trxn_.toString()
-				: trxnResponse_.toString());
+		+ Trxn.msgSeparator;
+		switch(type_) {
+		case REQ:
+			str += trxn_.toString();
+			break;
+		case RESP:
+			str += trxnResponse_.toString();
+			break;
+		case SPECIAL:
+			str += specialMsg.toString();
+		}
+		
+		return str;
 	}
 
 	/**
@@ -86,12 +106,16 @@ public class Message {
 	public Trxn getTrxn() {
 		return trxn_;
 	}
-	
+
 	/**
 	 * @return trxnResponse_
 	 */
 	public TrxnResponse getTrxnResponse() {
 		return trxnResponse_;
+	}
+
+	public SpecialMsg getSpecialMsg() {
+		return specialMsg;
 	}
 	
 	/**

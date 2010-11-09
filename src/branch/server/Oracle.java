@@ -27,6 +27,7 @@ import javax.swing.JFormattedTextField;
  * 
  */
 public class Oracle extends javax.swing.JFrame {
+	private static final String ORACLE = "ORACLE";
 	public static final String LINE = "---------------------------------------------------------------------------------------------\n";
 	private static NodeProperties properties_;
 
@@ -36,7 +37,7 @@ public class Oracle extends javax.swing.JFrame {
 
 	/** Creates new form BranchGUI */
 	public Oracle() {
-		super("ORACLE");
+		super(ORACLE);
 		initComponents();
 	}
 
