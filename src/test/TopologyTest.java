@@ -2,6 +2,7 @@ package test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import branch.server.Topology;
@@ -42,7 +43,7 @@ public class TopologyTest extends TestCase {
 	protected Topology createTopologyFile(String filePath, String node, String group) {
 		Topology tpl = null;
 		try {
-			tpl = new Topology(tempFile_.getAbsolutePath(), node, group);
+			tpl = new Topology(tempFile_.getAbsolutePath(), node);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -86,7 +87,7 @@ public class TopologyTest extends TestCase {
 	public void testTopologyCreation() {
 		Topology tpl = null;
 		try {
-			tpl = new Topology("no-file", null, null);
+			tpl = new Topology("no-file", null);
 			fail("Creating topology from bad file should raise exception.");
 		} catch(IOException e) {
 			assertEquals(
@@ -109,8 +110,8 @@ public class TopologyTest extends TestCase {
 		
 		Topology tpl = null;
 		
-		Vector<String> expectedNeighbors,neighbors;
-		expectedNeighbors = new Vector<String>();
+		ArrayList<String> expectedNeighbors,neighbors;
+		expectedNeighbors = new ArrayList<String>();
 
 		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S02_1", "S02");
 		expectedNeighbors.clear();
