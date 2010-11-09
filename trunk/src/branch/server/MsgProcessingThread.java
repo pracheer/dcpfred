@@ -80,7 +80,7 @@ public class MsgProcessingThread extends Thread {
 				if (myState == NodeProperties.ServerState.HEAD ||
 						myState == NodeProperties.ServerState.MIDDLE) {
 					String nextNode = myView.getSuccessor(properties.getNode());
-					NetworkWrapper.sendToServer(nextNode, msg.toString());
+					NetworkWrapper.sendToServer(msg.toString(), nextNode);
 				} else if (myState == NodeProperties.ServerState.TAIL && isRequestFromGui) {
 					NetworkWrapper.sendToGui(responseMessage.toString());
 				} else {

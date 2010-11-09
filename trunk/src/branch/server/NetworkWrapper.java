@@ -27,6 +27,12 @@ public abstract class NetworkWrapper {
 			return false;
 		}
 		// TODO testcase
+		
+		if(properties_.views_ == null || properties_.views_.get(service)== null) {
+			System.err.println("View is empty");
+			return false;
+		}
+		
 		server = properties_.views_.get(service).getHead();
 		return send(msg, server);
 	}
@@ -43,7 +49,8 @@ public abstract class NetworkWrapper {
 	
 	public static boolean send(String msg, String destNode) {
 		final Topology tpl = properties_.getTopology();
-		if (!tpl.isReachable(destNode.toString())) {
+		String destService = NodeName.getService(destNode);
+		if (!tpl.isReachable(destService.toString())) {
 			System.err.println("Not reachable : " + destNode.toString());
 			return false;
 		}
