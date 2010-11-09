@@ -182,7 +182,9 @@ public class Oracle extends javax.swing.JFrame {
 	}
 	
 	private void addServerActionPerformed(ActionEvent evt) {
+		
 		ArrayList<String> initialConfig = new ArrayList<String>();
+		
 		initialConfig.add(serverNameTextField.getText());
 //		initialConfig.add("S01_01");
 ////		inititialConfig.add("S02_01");
