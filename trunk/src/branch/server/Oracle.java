@@ -28,10 +28,10 @@ import javax.swing.JFormattedTextField;
 public class Oracle extends javax.swing.JFrame {
 	public static final String LINE = "---------------------------------------------------------------------------------------------\n";
 	private static NodeProperties properties_;
-	
+
 	private static BlockingMessageHandler bmh_;
-	
-	
+
+
 	/** Creates new form BranchGUI */
 	public Oracle() {
 		super("ORACLE");
@@ -53,7 +53,7 @@ public class Oracle extends javax.swing.JFrame {
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
-		
+
 		JScrollPane pScroll = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		getContentPane().add(pScroll);
 
@@ -67,7 +67,7 @@ public class Oracle extends javax.swing.JFrame {
 				removeServerButtonActionPerformed(evt);
 			}
 		});
-		
+
 		JButton addServerButton = new JButton();
 		addServerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -75,55 +75,55 @@ public class Oracle extends javax.swing.JFrame {
 			}
 		});
 		addServerButton.setText("Add Server");
-		
+
 		JLabel label = new JLabel();
 		label.setText("Server Name:");
-		
+
 		JFormattedTextField formattedTextField = new JFormattedTextField();
-		
+
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
 				getContentPane());
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(Alignment.LEADING)
+				layout.createParallelGroup(Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(31)
-					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(removeServerButton)
-							.addGap(37)
-							.addComponent(addServerButton, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE))
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(label, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(formattedTextField, GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
-							.addGap(24)))
-					.addGap(60))
-				.addGroup(layout.createSequentialGroup()
-					.addGap(4)
-					.addGroup(layout.createParallelGroup(Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(messageLabel, GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
-							.addGap(60))
-						.addComponent(pScroll, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-					.addContainerGap())
+						.addGap(31)
+						.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+								.addGroup(layout.createSequentialGroup()
+										.addComponent(removeServerButton)
+										.addGap(37)
+										.addComponent(addServerButton, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE))
+										.addGroup(layout.createSequentialGroup()
+												.addComponent(label, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+												.addPreferredGap(ComponentPlacement.RELATED)
+												.addComponent(formattedTextField, GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+												.addGap(24)))
+												.addGap(60))
+												.addGroup(layout.createSequentialGroup()
+														.addGap(4)
+														.addGroup(layout.createParallelGroup(Alignment.LEADING)
+																.addGroup(layout.createSequentialGroup()
+																		.addComponent(messageLabel, GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+																		.addGap(60))
+																		.addComponent(pScroll, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+																		.addContainerGap())
 		);
 		layout.setVerticalGroup(
-			layout.createParallelGroup(Alignment.LEADING)
+				layout.createParallelGroup(Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(17)
-					.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(label, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
-						.addComponent(formattedTextField, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-					.addGap(8)
-					.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(removeServerButton)
-						.addComponent(addServerButton))
-					.addGap(18)
-					.addComponent(messageLabel, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(pScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(54))
+						.addGap(17)
+						.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(label, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+								.addComponent(formattedTextField, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+								.addGap(8)
+								.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+										.addComponent(removeServerButton)
+										.addComponent(addServerButton))
+										.addGap(18)
+										.addComponent(messageLabel, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(pScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addGap(54))
 		);
 		getContentPane().setLayout(layout);
 		pack();
@@ -134,17 +134,17 @@ public class Oracle extends javax.swing.JFrame {
 	// End of variables declaration
 
 	private void removeServerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		
-//		String defaultAcNo = "00.00000"; 
+
+		//		String defaultAcNo = "00.00000"; 
 		String tempStr="";
 		Trxn transaction= null;
 		Message msg;
-		
+
 		msg = new Message(properties_.getNode(), Message.MsgType.REQ, transaction, null);
 		tempStr = msg.toString();
 
 		boolean sendStatus = bmh_.sendRequest(msg.toString());
-		
+
 		if (sendStatus == false) {
 			textArea.append("Could not connect to server. Unable to process request.\n"+LINE);
 		}
@@ -152,16 +152,16 @@ public class Oracle extends javax.swing.JFrame {
 	private void snapshotButtonActionPerformed(ActionEvent evt) {
 		Trxn transaction= null;
 		Message msg;
-		
+
 		transaction = new Trxn("SNAPSHOT_MARKER",
 				"000000000000","0.0","00.00000","00.00000","00.00000");
 		msg = new Message(properties_.getNode(),
 				Message.MsgType.REQ,
 				transaction,
 				null);
-		
+
 		boolean sendStatus = bmh_.sendRequest(msg.toString());
-		
+
 		if (sendStatus == false) {
 			textArea.append("Oracle GUI could not get reply from server. Unable to process request.\n"+LINE);
 		}
@@ -173,25 +173,25 @@ public class Oracle extends javax.swing.JFrame {
 			if (!NetworkWrapper.sendToServer(msg)) {
 				return false;
 			}
-			
+
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				System.err.println(e.getMessage());
 				e.printStackTrace();
 			}
-			
+
 			return true;
 		}
-		
+
 		synchronized void notifyOfResponse() {
 			notify();
 		}
 	}
-	
+
 	public static class GuiThread implements Runnable {
 		private Oracle gui_;
-		
+
 		public GuiThread(Oracle gui) {
 			gui_ = gui;
 		}
@@ -200,20 +200,20 @@ public class Oracle extends javax.swing.JFrame {
 			gui_.setVisible(true);
 		}
 	}
-	
+
 	public static void main(String args[]) {
 		// The Oracle should wait for a response of the sent request to arrive from the server.
 		// 'bmh_' is used to keep the listening-thread synchronized with the Oracle GUI thread.
 		bmh_ = new BlockingMessageHandler();
 		ServerSocket serverSocket = null;
-		
+
 		try {
 			properties_ = new NodeProperties(args, true);
 		} catch (NodeProperties.NodePropertiesException e) {
 			e.printStackTrace();
 			System.err.println("Unable to parse CLI for Oracle GUI");
 		}
-		
+
 		NetworkWrapper.setProperties(properties_);
 
 		// Match the IP of the current machine with the IP provided in 'servers'
@@ -247,13 +247,13 @@ public class Oracle extends javax.swing.JFrame {
 					"Coult not listen to port: " + properties_.getPort());
 			//System.exit(1);
 		}
-		
+
 		Oracle branchGUI = new Oracle();
 		GuiThread guiThread = new GuiThread(branchGUI);
 		java.awt.EventQueue.invokeLater(guiThread);
-		
+
 		System.out.println(properties_.print());
-		
+
 		// Oracle GUI starts listening.
 		while (true) {
 			try {
@@ -276,20 +276,8 @@ public class Oracle extends javax.swing.JFrame {
 					// Print the response to the Oracle GUI text-area.
 					TrxnResponse tResponse = msg.getTrxnResponse();
 
-					//branchGUI.printUserString(tResponse);
-					if (tResponse.getType() == TrxnResponse.Type.SNAPSHOT) {
-						// Response is of a snapshot request.
-						String snapshotId = tResponse.getSerialNum();
-						int initiatingBranch = Integer.parseInt(snapshotId.substring(1, 3));
-
-						// Wake-Up the Oracle GUI if the request was from this Oracle GUI.
-						if (initiatingBranch == properties_.getBranchId()) {
-							bmh_.notifyOfResponse();
-						}
-					} else {
-						// Wake-Up the Oracle GUI if the request was from this Oracle GUI.
-						bmh_.notifyOfResponse();
-					}
+					// Wake-Up the Oracle GUI if the request was from this Oracle GUI.
+					bmh_.notifyOfResponse();
 				} else {
 					// Only REQ / RESP type message is expected.
 					System.err.println("Unknown type of message received. Ignoring.");

@@ -21,31 +21,24 @@ public abstract class NetworkWrapper {
 		properties_ = properties;
 	}
 	
+	public static boolean sendToService(String msg) {
+		String server = properties_.getGroupId();
+		server = "S01";
+		// TODO
+		return send(msg, server);	
+	}
+	
 	public static boolean sendToServer(String msg) {
-		final Node myNode = properties_.getNode();
-
-		// Only GUI has an assigned server.
-		if (!myNode.isGui()) {
-			return false;
-		}
-		
-		Node destNode = new Node(false, myNode.getBranchId());
-		return send(msg, destNode);	
+		String server = properties_.getGroupId();
+		return send(msg, server);	
 	}
 	
 	public static boolean sendToGui(String msg) {
-		final Node myNode = properties_.getNode();
-
-		// Only BranchServer has an assigned GUI.
-		if (myNode.isGui()) {
-			return false;
-		}
-		
-		Node destNode = new Node(true, myNode.getBranchId());
+		String destNode = "G" + properties_.getGroupId();
 		return send(msg, destNode);	
 	}
 	
-	public static boolean send(String msg, Node destNode) {
+	public static boolean send(String msg, String destNode) {
 		final Topology tpl = properties_.getTopology();
 		if (!tpl.isReachable(destNode.toString())) {
 			System.err.println("Not reachable : " + destNode.toString());
@@ -92,12 +85,12 @@ public abstract class NetworkWrapper {
 		return success;
 	}
 
-	private static Socket getSocketForNode(Node node) {	
+	private static Socket getSocketForNode(String node) {	
 		Socket s = null;
 		
 		try {
 			NodeLocations.Location serverLocation =
-				properties_.getNodeLocations().getLocationForNode(node);
+				properties_.getServerLocations().getLocationForNode(node);
 			
 			if (serverLocation == null) {
 				return null;

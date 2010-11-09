@@ -7,8 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-import test.Test;
-
 /**
  * This class contains the Node location information for all the nodes in the
  * branch server network. A node can be either a GUI or a BranchServer.
@@ -19,6 +17,7 @@ import test.Test;
  */
 
 public class NodeLocations {
+	
 	public static class Location {
 		private String ip_;
 		private int port_;
@@ -53,7 +52,7 @@ public class NodeLocations {
 		BufferedReader in = new BufferedReader(fr);
 		while(true) {
 			String str = in.readLine();
-			if(str!=null && (str.startsWith(Test.COMMENT_START) || str.isEmpty()))
+			if(str!=null && (str.startsWith(Constants.COMMENT_START) || str.isEmpty()))
 				continue;
 			if (str == null) break;
 			
@@ -70,7 +69,7 @@ public class NodeLocations {
 		fr.close();
 	}
 	
-	public Location getLocationForNode(Node node) {
+	public Location getLocationForNode(String node) {
 		return locationMap_.get(node.toString());
 	}
 }

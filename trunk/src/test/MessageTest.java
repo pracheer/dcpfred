@@ -1,7 +1,6 @@
 package test;
 
 import branch.server.Message;
-import branch.server.Node;
 import branch.server.Trxn;
 import branch.server.TrxnResponse;
 import junit.framework.TestCase;
@@ -13,7 +12,7 @@ public class MessageTest extends TestCase {
 	
 	
 	public void testPrettyString() {
-		Node sourceNode = new Node("G01");
+		String sourceNode = "G01";
 		transaction_ = new Trxn(
 				"T0100000001",
 				Trxn.TransxType.TRANSFER,

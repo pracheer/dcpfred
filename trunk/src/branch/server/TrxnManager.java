@@ -48,9 +48,9 @@ public class TrxnManager {
 			break;
 
 		case TRANSFER:
-			if(trxn_.getSourceBranch() == BranchServer.getProperties().getBranchId()) {
+			if(trxn_.getSourceBranch().equalsIgnoreCase(BranchServer.getProperties().getGroupId())) {
 				trxnResponse = handleTransferAtSource();
-			} else if (trxn_.getDestBranch() == BranchServer.getProperties().getBranchId()) {
+			} else if (trxn_.getDestBranch().equalsIgnoreCase(BranchServer.getProperties().getGroupId())) {
 				trxnResponse = handleTransferAtDest();
 			} else {
 				System.err.println("Incorrect transaction");
@@ -79,12 +79,12 @@ public class TrxnManager {
 	private TrxnResponse handleTransferAtSource() {
 		TrxnResponse trxnResponse;
 		Double balance;
-		Node destinationNode = new Node(false, trxn_.getDestBranch());
+		String destinationGrp = trxn_.getDestBranch();
 		
 		// See if Destination Server is reachable.
-		if (trxn_.getDestBranch() != trxn_.getSourceBranch()) {
+		if (!trxn_.getDestBranch().equalsIgnoreCase(trxn_.getSourceBranch())) {
 			final Topology topology = BranchServer.getProperties().getTopology();
-			if (!topology.isReachable(destinationNode.toString())) {
+			if (!topology.isReachable(destinationGrp)) {
 				trxnResponse = new TrxnResponse(trxn_.getSerialNum()
 						, TrxnResponse.Type.TRANSACTION 
 						, AccDetails.query(trxn_.getSourceAccount())
@@ -96,7 +96,7 @@ public class TrxnManager {
 		// Local Withdraw 
 		if (!TransactionLog.containsTrxn(trxn_.getSerialNum())) {
 			AccDetails.withdraw(trxn_.getSourceAccount(), trxn_.getAmount());
-			if (trxn_.getSourceBranch() == trxn_.getDestBranch()) {
+			if (trxn_.getSourceBranch().equalsIgnoreCase(trxn_.getDestBranch())) {
 				//Local Deposit
 				AccDetails.deposit(trxn_.getDestAccount(), trxn_.getAmount());
 			}
@@ -107,11 +107,11 @@ public class TrxnManager {
 		}
 
 		// Deposit the amount to the destination account at different branch
-		if (trxn_.getSourceBranch() != trxn_.getDestBranch()) {
+		if (!trxn_.getSourceBranch().equalsIgnoreCase(trxn_.getDestBranch())) {
 			Message msg = new Message(BranchServer.getProperties().getNode(),
 					Message.MsgType.REQ, trxn_, null);
 
-			if (!NetworkWrapper.send(msg.toString(), destinationNode)) {
+			if (!NetworkWrapper.send(msg.toString(), destinationGrp)) {
 				System.err.println("Not able to send message to destination Server.");
 			}
 		}

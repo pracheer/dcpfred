@@ -25,13 +25,13 @@ public class Trxn {
 	private String destAccount_ = null;
 
 	private Double amount_ = (double) 0;
-	
+
 	public Trxn(String type, String serialNum, String amt, String acNo,
 			String srcAcNo, String destAcNo) {
-		
+
 		serialNum_ = serialNum;
 		type_ = TransxType.valueOf(type);
-		
+
 		switch (type_) {
 		case DEPOSIT:
 		case WITHDRAW:
@@ -83,13 +83,13 @@ public class Trxn {
 
 	public String toString() {
 		return type_
-				+ msgSeparator
-				+ serialNum_
-				+ msgSeparator
-				+ sourceAccount_
-				+ msgSeparator
-				+ amount_
-				+ (type_ == TransxType.TRANSFER ? msgSeparator + destAccount_ : "");
+		+ msgSeparator
+		+ serialNum_
+		+ msgSeparator
+		+ sourceAccount_
+		+ msgSeparator
+		+ amount_
+		+ (type_ == TransxType.TRANSFER ? msgSeparator + destAccount_ : "");
 	}
 
 	public static Trxn parseString(String str) {
@@ -108,30 +108,22 @@ public class Trxn {
 		return type_;
 	}
 
-	public int getSourceBranch() {
+	public String getSourceBranch() {
 		try {
-			return Integer.parseInt(sourceAccount_.substring(0, 2));
+			return sourceAccount_.substring(0, 2);
 		} catch (NumberFormatException e) {
 			System.err.println("Invalid source branch Id. Branch Id has to be an integer");
 			System.err.println(e.getMessage());
 		}
-		return -1;
+		return null;
 	}
 
 	public String getSourceAccount() {
 		return sourceAccount_;
 	}
 
-	public int getDestBranch() {
-		try {
-			return Integer.parseInt(destAccount_.substring(0, 2));
-		} catch (NumberFormatException e) {
-			System.err
-			.println("Invalid dest branch Id. Branch Id has to be an integer");
-			System.err.println(e.getMessage());
-		}
-
-		return -1;
+	public String getDestBranch() {
+		return destAccount_.substring(0, 2);
 	}
 
 	public String getDestAccount() {
@@ -145,13 +137,13 @@ public class Trxn {
 	public void setSerialNum(String serialNum) {
 		serialNum_ = serialNum;
 	}
-	
+
 	public String getPrettyString() {
 		String str = "";
-		
+
 		str += "(" + type_.toString() + ") ";		
 		str += "Serial: " + serialNum_;
-		
+
 		if (type_ == TransxType.TRANSFER) {
 			str += " FromAccount: " + sourceAccount_;
 			str += " ToAccount: " + destAccount_;
@@ -160,8 +152,8 @@ public class Trxn {
 			str += " Account: " + sourceAccount_;
 			str += " Amount: " + amount_;
 		}
-		
-		
+
+
 		return str;
 	}
 

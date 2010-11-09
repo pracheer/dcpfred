@@ -38,7 +38,7 @@ public class Test {
 				args = ("-id "+destNode+" -topology "+properties.topologyFile_+" -servers "+properties.serverLocationFile_).split(" ");
 				NodeProperties properties_ = new NodeProperties(args, true);
 				NetworkWrapper.setProperties(properties_);
-				NetworkWrapper.send(msgStr, new Node(false, destNode));
+				NetworkWrapper.send(msgStr, "S"+destNode.toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

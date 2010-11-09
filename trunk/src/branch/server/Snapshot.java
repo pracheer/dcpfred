@@ -59,8 +59,7 @@ public class Snapshot {
 		Message newMsg = new Message(properties.getNode(), Message.MsgType.REQ, newTrxn, null);
 
 		for (String outNeighbor : outNeighbors) {
-			Node destinationNode = new Node(false, Integer.parseInt(outNeighbor.substring(1)));
-			if (!NetworkWrapper.send(newMsg.toString(), destinationNode)) {
+			if (!NetworkWrapper.send(newMsg.toString(), outNeighbor)) {
 				System.err.println("Not able to send markers on outgoing channels.");
 			}
 		}
@@ -90,8 +89,8 @@ public class Snapshot {
 	 * where marker is yet to be received -1 is returned to indicate errors.
 	 */
 	public int closeChannel(String srcName) {
-		Node srcNode = new Node(srcName);
-		if (srcNode.isGui()) {
+		
+		if (srcName.startsWith("G")) {
 			return 1;
 		}
 		if(oChannels.containsKey(srcName)) {

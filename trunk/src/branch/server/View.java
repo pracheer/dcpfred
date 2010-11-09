@@ -6,15 +6,15 @@ public class View {
 
 	String groupId = null;
 
-	ArrayList<Node> listOfServers = null;
+	ArrayList<String> listOfServers = null;
 
-	public View(String groupId, Node server) {
+	public View(String groupId, String server) {
 		this.groupId = groupId;
-		listOfServers = new ArrayList<Node>();
+		listOfServers = new ArrayList<String>();
 		listOfServers.add(server);
 	}
 
-	public void addServer(Node server) {
+	public void addServer(String server) {
 		listOfServers.add(server);
 	}
 
@@ -25,22 +25,22 @@ public class View {
 		listOfServers.remove(serverIndex);
 	}
 
-	public Node getHead() {
+	public String getHead() {
 		return listOfServers.get(0);
 	}
 
-	public Node getTail() {
+	public String getTail() {
 		return listOfServers.get(listOfServers.size() - 1);
 	}
 
-	public Node getPredecessor(int serverIndex) {
+	public String getPredecessor(int serverIndex) {
 		if (serverIndex == 0)
 			return null;
 		else
 			return listOfServers.get(serverIndex - 1);
 	}
 
-	public Node getSuccessor(int serverIndex) {
+	public String getSuccessor(int serverIndex) {
 		if (serverIndex == (listOfServers.size()-1))
 			return null;
 		else 

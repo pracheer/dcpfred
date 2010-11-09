@@ -7,8 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
-import test.Test;
-
 /**
  * Maintains the network topology.
  * Gives the isReachable() interface to the current node, so that it knows
@@ -22,32 +20,21 @@ import test.Test;
 
 public class Topology {
 	public static class Connection {
-		Node src_;
-		Node dest_;
+		String src_;
+		String dest_;
 
 		public Connection() {
-			src_ = new Node();
-			dest_ = new Node();
+			src_ = null;
+			dest_ = null;
 		}
 
 		// Parses string of the form, JVM1 JVM2
 		// and updates the connection variables.
-		public boolean parseString(String str) {
+		public void parseString(String str) {
 			int spaceAt = str.indexOf(' ');
 
-			src_ = new Node();
-			String sourceString = new String(str.substring(0, spaceAt));
-			if (!src_.parseString(sourceString)) {
-				return false;
-			}
-
-			dest_ = new Node();
-			String destinationString = new String(str.substring(spaceAt + 1));
-			if (!dest_.parseString(destinationString)) {
-				return false;
-			}
-
-			return true;
+			src_ = str.substring(0, spaceAt);
+			dest_ = str.substring(spaceAt + 1);
 		}
 
 		public String getSourceString() {
@@ -62,9 +49,11 @@ public class Topology {
 	final private Vector<Connection> connections_;
 	final private Vector<String> inNeighbors_;
 	final private Vector<String> outNeighbors_;
-	final private Node node_;
+	final private String node_;
+	final private String group_;
 
-	public Topology(String topologyFileLocation, Node node) throws IOException {
+	public Topology(String topologyFileLocation, String node, String group) throws IOException {
+		group_ = group;
 		FileReader fr = null;
 		try {
 			fr = new FileReader(new File(topologyFileLocation));
@@ -77,36 +66,37 @@ public class Topology {
 		BufferedReader in = new BufferedReader(fr);
 		String str;
 		while ((str = in.readLine())!=null) {
-			if(str.startsWith(Test.COMMENT_START) || str.isEmpty())
+			if(str.startsWith(Constants.COMMENT_START) || str.isEmpty())
 				continue;
-			
+
 			Connection c = new Connection();
-			if (c.parseString(str)) {
-				connections_.add(c);
-			} else {
-				System.err.println("Error in connection line: " + str);
-			}
+			c.parseString(str);
+			connections_.add(c);
 		}
-		
+
 		in.close();
 		fr.close();
-		
+
 		node_ = node;
-		inNeighbors_ = whoInNeighbors(node.toString());
-		outNeighbors_ = whoOutNeighbors(node.toString());
+		inNeighbors_ = whoInNeighbors(node);
+		outNeighbors_ = whoOutNeighbors(node);
 	}
 
 	public boolean isReachable(String dest) {
-		String nodeString = node_.toString();
+		String nodeString = node_;
+		if (node_.startsWith("G") && (node_.substring(1,3).equals(dest.substring(1, 3))))
+			return true;
+		if (dest.startsWith("G") && (node_.substring(1,3).equals(dest.substring(1, 3))))
+			return true;
 		for (int i = 0; i < connections_.size(); ++i) {
 			final Connection con = connections_.elementAt(i);
-			
+
 			if (con.getSourceString().equalsIgnoreCase(nodeString) &&
 					con.getDestinationString().equalsIgnoreCase(dest)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 

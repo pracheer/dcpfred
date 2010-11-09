@@ -10,7 +10,7 @@ public class Message {
 		REQ, RESP,
 	}
 
-	Node srcNode_;
+	String srcNode_;
 	MsgType type_;
 
 	// Only relevant for REQ type message.
@@ -23,7 +23,7 @@ public class Message {
 		return new Message(str);
 	}
 
-	public Message(Node sourceNode, MsgType type,
+	public Message(String sourceNode, MsgType type,
 			Trxn trxn, TrxnResponse trxnResp) {
 		this.srcNode_ = sourceNode;
 		this.type_ = type;
@@ -46,8 +46,7 @@ public class Message {
 
 		type_ = MsgType.valueOf(str.substring(0, index1));
 
-		srcNode_ = new Node(str.substring(index1
-				+ Trxn.msgSeparator.length(), index2));
+		srcNode_ = str.substring(index1 + Trxn.msgSeparator.length(), index2);
 
 		if (type_ == MsgType.REQ)
 			trxn_ = Trxn.parseString(str.substring(index2
@@ -70,7 +69,7 @@ public class Message {
 	/**
 	 * @return the sourceName_
 	 */
-	public Node getSrcNode() {
+	public String getSrcNode() {
 		return srcNode_;
 	}
 

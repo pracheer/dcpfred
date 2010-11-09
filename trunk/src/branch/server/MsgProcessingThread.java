@@ -71,8 +71,7 @@ public class MsgProcessingThread extends Thread {
 						tm.processTransaction());
 
 				// Reply the GUI if the request came from him.
-				if (Integer.parseInt(msg.getTrxn().getSerialNum().substring(1,3))
-						== BranchServer.getProperties().getBranchId()) {
+				if (msg.getTrxn().getSerialNum().substring(1,3).equalsIgnoreCase(BranchServer.getProperties().getGroupId())) {
 					NetworkWrapper.sendToGui(responseMessage.toString());
 				}
 

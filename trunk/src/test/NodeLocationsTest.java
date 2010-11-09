@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import branch.server.Node;
 import branch.server.NodeLocations;
 import junit.framework.TestCase;
 
@@ -41,22 +40,22 @@ public class NodeLocationsTest extends TestCase {
 			fail(e.getMessage());
 		}
 		
-		Node node = new Node("S01");
+		String node = "S01";
 		NodeLocations.Location l = locations.getLocationForNode(node);
 		assertEquals("localhost", l.getIp());
 		assertEquals(10001, l.getPort());
 		
-		node = new Node("S02");
+		node = "S02";
 		l = locations.getLocationForNode(node);
 		assertEquals("11.12.13.14", l.getIp());
 		assertEquals(10002, l.getPort());
 		
-		node = new Node("S03");
+		node = "S03";
 		l = locations.getLocationForNode(node);
 		assertEquals("12.13.14.15", l.getIp());
 		assertEquals(10004, l.getPort());
 		
-		node = new Node("S04");
+		node = "S04";
 		l = locations.getLocationForNode(node);
 		assertEquals("localhost", l.getIp());
 		assertEquals(10005, l.getPort());
