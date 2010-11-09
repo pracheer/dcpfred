@@ -96,10 +96,6 @@ public class Trxn {
 		return new Trxn(str);
 	}
 
-	public static String getMsgseparator() {
-		return msgSeparator;
-	}
-
 	public String getSerialNum() {
 		return serialNum_;
 	}
@@ -152,7 +148,6 @@ public class Trxn {
 			str += " Account: " + sourceAccount_;
 			str += " Amount: " + amount_;
 		}
-
 
 		return str;
 	}
