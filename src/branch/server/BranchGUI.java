@@ -44,7 +44,7 @@ public class BranchGUI extends javax.swing.JFrame {
 	
 	/** Creates new form BranchGUI */
 	public BranchGUI() {
-		super(BranchGUI.properties_.getNode().toString());
+		super(BranchGUI.properties_.getNode());
 		initComponents();
 	}
 
@@ -302,8 +302,7 @@ public class BranchGUI extends javax.swing.JFrame {
 		} else if (transferButton.isSelected()) {
 			ret = "T";
 		} 
-		ret = ret
-			+ String.format("%02d", properties_.getBranchId())
+		ret = ret + properties_.getGroupId()
 			+ String.format("%08d", newSerialInt);
 		return ret;
 	}
@@ -327,7 +326,7 @@ public class BranchGUI extends javax.swing.JFrame {
 			return "Format should be [DWTQ] + branchID + 8 digit integer." ;
 		}
 		
-		if (BranchGUI.properties_.getBranchId() != Integer.parseInt(str.substring(1, 3)))
+		if (!BranchGUI.properties_.getGroupId().equals(str.substring(1, 3)))
 			return "Format should be [DWTQ] + branchID + 8 digit integer. BranchId specified is not this branch" ;
 		
 		if (depositButton.isSelected() && str.charAt(0)!= 'D') {
@@ -358,7 +357,7 @@ public class BranchGUI extends javax.swing.JFrame {
 		return false;
 	}
 	public boolean accBelongsToThisBranch(String accNo){
-		if (BranchGUI.properties_.getBranchId() == Integer.parseInt(accNo.substring(0, 2)))
+		if (BranchGUI.properties_.getGroupId().equals(accNo.substring(0, 2)))
 			return true;
 		else 
 			return false;
@@ -481,7 +480,7 @@ public class BranchGUI extends javax.swing.JFrame {
 		if (!isValidSerNo(serNo)) {
 			textArea.append("Serial Number niether next in sequence nor used before. Please validate."
 					+ "Next serial number should be [DWQT]"
-					+ String.format("%02d", properties_.getBranchId())
+					+ String.format("%02d", properties_.getGroupId())
 					+ String.format("%02d", lastSerialNumCounter_ + 1)
 					+ "\n" +LINE);
 			return;
@@ -540,7 +539,7 @@ public class BranchGUI extends javax.swing.JFrame {
 		String snapshotId  = null;
 		snapshotCounter_ += 1;
 		snapshotId = "S"
-			+ String.format("%02d", properties_.getBranchId())
+			+ String.format("%02d", properties_.getGroupId())
 			+ String.format("%08d", snapshotCounter_);
 		transaction = new Trxn("SNAPSHOT_MARKER",
 				snapshotId,"0.0","00.00000","00.00000","00.00000");
@@ -578,7 +577,7 @@ public class BranchGUI extends javax.swing.JFrame {
 
 	public static class BlockingMessageHandler {
 		synchronized boolean sendRequest(String msg) {
-			if (!NetworkWrapper.sendToServer(msg)) {
+			if (!NetworkWrapper.sendToService(msg)) {
 				return false;
 			}
 			
@@ -688,10 +687,10 @@ public class BranchGUI extends javax.swing.JFrame {
 					if (tResponse.getType() == TrxnResponse.Type.SNAPSHOT) {
 						// Response is of a snapshot request.
 						String snapshotId = tResponse.getSerialNum();
-						int initiatingBranch = Integer.parseInt(snapshotId.substring(1, 3));
+						String initiatingBranch = snapshotId.substring(1, 3);
 
 						// Wake-Up the GUI if the request was from this GUI.
-						if (initiatingBranch == properties_.getBranchId()) {
+						if (initiatingBranch.equalsIgnoreCase(properties_.getGroupId())){
 							bmh_.notifyOfResponse();
 						}
 					} else {

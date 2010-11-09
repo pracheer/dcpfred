@@ -2,6 +2,8 @@ package branch.server;
 
 import java.io.IOException;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -18,13 +20,12 @@ import java.util.Vector;
 public class NodeProperties {
 	private final Topology topology_;
 	private final NodeLocations serverLocations_;
-	private final String node_;
+	private String node_;
 	private String ip_;
 	private final int port_;
 	private final boolean isGui_;
 	
-	private int groupId_;
-	private int nodeId_;
+	private String groupId_;
 	private String topologyFile_;
 	private String serverLocationFile_;
 	private Integer sleep_ = 0; // sleep time in milliseconds
@@ -36,8 +37,7 @@ public class NodeProperties {
 	}
 
 	public NodeProperties(String[] args, boolean isGui) throws NodePropertiesException {
-		nodeId_ = -1;
-		groupId_ = -1;
+		groupId_ = null;
 		topologyFile_ = "";
 		serverLocationFile_ = "";
 		isGui_ = isGui;
@@ -48,20 +48,12 @@ public class NodeProperties {
 			throw new NodePropertiesException(fe.getMessage());
 		}
 		
-		// Setting current node.
-		if (nodeId_ == -1) {
-			throw new NodePropertiesException("Branch Id (id) parameter not provided.");
-		} else {
-			node_ = new Node((isGui_ ? "G" : "S") + String.format("%02d", nodeId_));
-		}
-		
-		
 		// Topology.
 		try {
 			if(topologyFile_.equals("")) {
 				throw new NodePropertiesException("No topology file.");
 			}			
-			topology_ = new Topology(topologyFile_, node_);
+			topology_ = new Topology(topologyFile_, node_, groupId_);
 		} catch (IOException e) {
 			throw new NodePropertiesException(e.getMessage());
 		}
@@ -90,7 +82,7 @@ public class NodeProperties {
 			
 			try {
 				if (argument.getName().equals("id")) {
-					nodeId_ = Integer.parseInt(argument.getValue());
+					node_ = argument.getValue();
 				} else if (argument.getName().equals("topology")) {
 					topologyFile_ = argument.getValue();
 				} else if (argument.getName().equals("servers")) {
@@ -98,7 +90,14 @@ public class NodeProperties {
 				} else if (argument.getName().endsWith("sleep")) {
 					sleep_ = Integer.parseInt(argument.getValue());
 				} else if (argument.getName().endsWith("group")) {
-					groupId_ = Integer.parseInt(argument.getValue());
+					String expression = "^[0-9][0-9]$";
+					Pattern pattern = Pattern.compile(expression);
+					Matcher matcher = pattern.matcher(argument.getValue());
+					if (!matcher.matches()) {
+						throw new FlagParser.FlagParseException(
+								"Incorrect GroupName format: " + argument.getValue());
+					}					
+					groupId_ = argument.getValue();
 				} else {
 					throw new FlagParser.FlagParseException(
 							"Unknown flag: " + argument.getName());
@@ -110,28 +109,44 @@ public class NodeProperties {
 		}
 	}
 	
-	public String getIp() {
-		return ip_;
-	}
-	
-	public int getPort() {
-		return port_;
-	}
-	
-	public int getBranchId() {
-		return node_.getBranchId();
-	}
-	
 	public Topology getTopology() {
 		return topology_;
 	}
-		
-	public NodeLocations getNodeLocations() {
+
+	public NodeLocations getServerLocations() {
 		return serverLocations_;
 	}
-	
-	public Node getNode() {
+
+	public String getNode() {
 		return node_;
+	}
+
+	public String getIp() {
+		return ip_;
+	}
+
+	public int getPort() {
+		return port_;
+	}
+
+	public boolean isGui() {
+		return isGui_;
+	}
+
+	public String getGroupId() {
+		return groupId_;
+	}
+
+	public String getTopologyFile() {
+		return topologyFile_;
+	}
+
+	public String getServerLocationFile() {
+		return serverLocationFile_;
+	}
+
+	public Integer getSleep_() {
+		return sleep_;
 	}
 
 	public String print() {

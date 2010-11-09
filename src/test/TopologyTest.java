@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
-import branch.server.Node;
 import branch.server.Topology;
 
 import junit.framework.TestCase;
@@ -40,10 +39,10 @@ public class TopologyTest extends TestCase {
 		tempFile_.delete();
 	}
 	
-	protected Topology createTopologyFile(String filePath, String node) {
+	protected Topology createTopologyFile(String filePath, String node, String group) {
 		Topology tpl = null;
 		try {
-			tpl = new Topology(tempFile_.getAbsolutePath(), new Node(node));
+			tpl = new Topology(tempFile_.getAbsolutePath(), node, group);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -64,22 +63,22 @@ public class TopologyTest extends TestCase {
 		 * S03 S01
 		 */
 
-		Topology tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S01");
+		Topology tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S01_1", "S01");
 		assertTrue(tpl.isReachable("G01"));
 		assertTrue(tpl.isReachable("S05"));
 		assertFalse(tpl.isReachable("S01"));
 
-		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "G01");
+		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "G01_1", "G01");
 		assertTrue(tpl.isReachable("S01"));
 		assertFalse(tpl.isReachable("S02"));
 		
-		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S02");		
+		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S02_1", "S02");		
 		assertTrue(tpl.isReachable("S04"));
 		assertTrue(tpl.isReachable("S01"));
 		assertTrue(tpl.isReachable("S03"));
 		assertTrue(tpl.isReachable("G02"));
 		
-		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "G02");
+		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "G02_1", "G02");
 		assertTrue(tpl.isReachable("S02"));
 		assertFalse(tpl.isReachable("S01"));
 	}
@@ -87,7 +86,7 @@ public class TopologyTest extends TestCase {
 	public void testTopologyCreation() {
 		Topology tpl = null;
 		try {
-			tpl = new Topology("no-file", null);
+			tpl = new Topology("no-file", null, null);
 			fail("Creating topology from bad file should raise exception.");
 		} catch(IOException e) {
 			assertEquals(
@@ -113,7 +112,7 @@ public class TopologyTest extends TestCase {
 		Vector<String> expectedNeighbors,neighbors;
 		expectedNeighbors = new Vector<String>();
 
-		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S02");
+		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S02_1", "S02");
 		expectedNeighbors.clear();
 		expectedNeighbors.add("S04");
 		expectedNeighbors.add("S01");
@@ -121,7 +120,7 @@ public class TopologyTest extends TestCase {
 		neighbors = tpl.getOutNeighbors();
 		assertTrue(expectedNeighbors.equals(neighbors));
 		
-		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S01");
+		tpl = createTopologyFile(tempFile_.getAbsolutePath(), "S01_1", "S01");
 		expectedNeighbors.clear();
 		expectedNeighbors.add("S02");
 		expectedNeighbors.add("S03");

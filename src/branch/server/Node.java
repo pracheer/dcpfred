@@ -1,11 +1,11 @@
-/*package branch.server;
-*//**
+package branch.server;
+/**
  * 
  * @author qsh2
  * 
  * Node structure of a branch server or a branch GUI.
  * 
- *//*
+ */
 public class Node {
 	private boolean gui_;
 	private int branchId_;
@@ -76,4 +76,3 @@ public class Node {
 	}
 	
 }
-*/
