@@ -29,11 +29,10 @@ public class TransactionLog {
 	}
 	
 	public static HashMap<String, Trxn> getAllTransactions() {
-		// TODO
-		return null;
+		return (HashMap<String, Trxn>) trxnLog.clone();
 	}
 	
 	public static void synchronizeTransactions(Sync sync) {
-		// TODO
+		trxnLog = sync.getTransactionLogs();
 	}
 }
