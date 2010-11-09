@@ -144,6 +144,10 @@ public class MsgProcessingThread extends Thread {
 			} else {
 				if (mySuccessor == null) {
 					properties.updateState(NodeProperties.ServerState.TAIL);
+				} else if (view.getPredecessor(myNode) == null) {
+					properties.updateState(NodeProperties.ServerState.HEAD);
+				} else {
+					properties.updateState(NodeProperties.ServerState.MIDDLE);
 				}
 			}			
 		}
