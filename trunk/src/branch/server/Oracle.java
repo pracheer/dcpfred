@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,7 +31,8 @@ public class Oracle extends javax.swing.JFrame {
 	private static NodeProperties properties_;
 
 	private static BlockingMessageHandler bmh_;
-
+	private static HashMap<String, View> views_ = 
+		new HashMap<String, View>(10);
 
 	/** Creates new form BranchGUI */
 	public Oracle() {

@@ -7,7 +7,7 @@ package branch.server;
 // In the receiving end we use parseString to get back the Message object.
 public class Message {
 	public static enum MsgType {
-		REQ, RESP,
+		REQ, RESP, SPECIAL
 	}
 
 	String srcNode_;

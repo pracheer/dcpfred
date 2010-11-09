@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.util.HashMap;
 
 /**
  * 
@@ -25,7 +26,8 @@ import java.net.*;
 
 public class BranchServer {
 	private static NodeProperties properties_;
-	
+	private static HashMap<String, View> views_ = 
+		new HashMap<String, View>(10);
 	public static NodeProperties getProperties() {
 		return properties_;
 	}

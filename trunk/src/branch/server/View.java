@@ -8,21 +8,17 @@ public class View {
 
 	ArrayList<String> listOfServers = null;
 
-	public View(String groupId, String server) {
+	public View(String groupId) {
 		this.groupId = groupId;
 		listOfServers = new ArrayList<String>();
-		listOfServers.add(server);
 	}
 
 	public void addServer(String server) {
 		listOfServers.add(server);
 	}
 
-	/**
-	 * @param serverIndex: head index is 0, tail has the last index.
-	 */
-	public void removeServer(int serverIndex) {
-		listOfServers.remove(serverIndex);
+	public boolean removeServer(String server) {
+		return listOfServers.remove(server);
 	}
 
 	public String getHead() {
@@ -33,17 +29,39 @@ public class View {
 		return listOfServers.get(listOfServers.size() - 1);
 	}
 
-	public String getPredecessor(int serverIndex) {
-		if (serverIndex == 0)
+	public String getPredecessor(String server) {
+		int index = listOfServers.indexOf(server);
+		if(index == 0) {
 			return null;
-		else
-			return listOfServers.get(serverIndex - 1);
+		}
+		else 
+			return listOfServers.get(index-1);
 	}
 
-	public String getSuccessor(int serverIndex) {
-		if (serverIndex == (listOfServers.size()-1))
+	public String getSuccessor(String server) {
+		int index = listOfServers.indexOf(server);
+		if(index == listOfServers.size() -1)
 			return null;
 		else 
-			return listOfServers.get(serverIndex + 1);
+			return listOfServers.get(index + 1);
+	}
+	
+	public String toString() {
+		String str = groupId;
+		for(int i = 0; i < listOfServers.size(); i++)
+		{
+			str += Trxn.msgSeparator + listOfServers.get(i);
+		}
+		
+		return str;
+	}
+	
+	public static View parseString(String str) {
+		String[] parts = str.split(Trxn.msgSeparator);
+		View view = new View(parts[0]);
+		for ( int i = 1; i < parts.length; i++) {
+			view.addServer(parts[i]);
+		}
+		return view;
 	}
 }

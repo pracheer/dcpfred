@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +41,8 @@ public class BranchGUI extends javax.swing.JFrame {
 	private static BlockingMessageHandler bmh_;
 	private int snapshotCounter_ = 0;
 	private int lastSerialNumCounter_ =0;
-	
+	private static HashMap<String, View> views_ = 
+		new HashMap<String, View>(10);
 	
 	/** Creates new form BranchGUI */
 	public BranchGUI() {
