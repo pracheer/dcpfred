@@ -578,7 +578,7 @@ public class BranchGUI extends javax.swing.JFrame {
 	public static class BlockingMessageHandler {
 		private	Thread toWakeUp_;
 		private int waitingTime_;
-		private static final int INITIAL_WAITING_TIME = 100;
+		private static final int INITIAL_WAITING_TIME = 2000000;
 		
 		public BlockingMessageHandler() {
 			initialize();			

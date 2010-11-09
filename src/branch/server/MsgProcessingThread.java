@@ -83,7 +83,7 @@ public class MsgProcessingThread extends Thread {
 					NetworkWrapper.sendToServer(msg.toString(), nextNode);
 				} else if (myState == NodeProperties.ServerState.TAIL && isRequestFromGui) {
 					NetworkWrapper.sendToGui(responseMessage.toString());
-				} else {
+				} else if (isRequestFromGui) {
 					System.err.println("Server does not have a valid state.");
 				}
 
@@ -116,7 +116,7 @@ public class MsgProcessingThread extends Thread {
 		NodeProperties properties = BranchServer.getProperties();
 		properties.updateView(view);
 		// If it is my group then a few special cases.
-		if (view.getGroupId() == properties.getGroupId()) {
+		if (view.getGroupId().equals(properties.getGroupId())) {
 			NodeProperties.ServerState myState = properties.getState();
 			String myNode = properties.getNode();
 			String mySuccessor = view.getSuccessor(myNode);
