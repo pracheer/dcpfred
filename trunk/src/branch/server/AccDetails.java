@@ -52,6 +52,11 @@ public class AccDetails {
 	}
 
 	public static synchronized HashMap<String,Double> getAllAccnts() {
+		// TODO
 		return accountDetails;
+	}
+	
+	public static synchronized void synchronizeAccounts(Sync sync) {
+		// TODO
 	}
 }

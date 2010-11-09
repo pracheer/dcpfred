@@ -3,13 +3,12 @@ package branch.server;
 import java.util.ArrayList;
 
 public class View {
-
-	String groupId = null;
+	String groupId_ = null;
 
 	ArrayList<String> listOfServers = null;
 
 	public View(String groupId) {
-		this.groupId = groupId;
+		this.groupId_ = groupId;
 		listOfServers = new ArrayList<String>();
 	}
 
@@ -22,6 +21,10 @@ public class View {
 
 	public boolean removeServer(String server) {
 		return listOfServers.remove(server);
+	}
+	
+	public String getGroupId() {
+		return groupId_;
 	}
 
 	public String getHead() {
@@ -50,7 +53,7 @@ public class View {
 	}
 	
 	public String toString() {
-		String str = groupId;
+		String str = groupId_;
 		for(int i = 0; i < listOfServers.size(); i++)
 		{
 			str += Trxn.msgSeparator + listOfServers.get(i);

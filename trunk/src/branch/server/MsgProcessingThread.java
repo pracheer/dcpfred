@@ -30,7 +30,7 @@ public class MsgProcessingThread extends Thread {
 			// will block if the queue is empty.
 			Message msg = messages_.getMsg();
 
-			if(msg.getTrxn().getType() == Trxn.TransxType.SNAPSHOT_MARKER) {
+			if(msg.getType() == Message.MsgType.REQ && msg.getTrxn().getType() == Trxn.TransxType.SNAPSHOT_MARKER) {
 				String snapshotId = msg.getTrxn().getSerialNum();
 				Snapshot snapshot;
 
@@ -63,7 +63,7 @@ public class MsgProcessingThread extends Thread {
 							new TrxnResponse(snapshotId, TrxnResponse.Type.SNAPSHOT, snapshot.print()));
 					NetworkWrapper.sendToGui(responseMessage.toString());
 				}
-			} else { // Message is a normal Message - Request.
+			} else if (msg.getType() == Message.MsgType.REQ) { // Message is a normal Message - Request.
 				/* Process the transaction request */
 				TrxnManager tm = new TrxnManager(msg.getTrxn());
 				Message responseMessage = new Message(
@@ -85,8 +85,7 @@ public class MsgProcessingThread extends Thread {
 						myState == NodeProperties.ServerState.MIDDLE) {
 					String nextNode = myView.getSuccessor(properties.getNode());
 					NetworkWrapper.sendToServer(nextNode, msg.toString());
-				} else if (myState == NodeProperties.ServerState.HEAD_AND_TAIL ||
-						myState == NodeProperties.ServerState.TAIL) {
+				} else if (myState == NodeProperties.ServerState.TAIL) {
 					NetworkWrapper.sendToGui(responseMessage.toString());
 				} else {
 					System.err.println("Server does not have a valid state.");
@@ -100,10 +99,54 @@ public class MsgProcessingThread extends Thread {
 						}
 					}
 				}
+			} else if (msg.getType() == Message.MsgType.SPECIAL) {
+				SpecialMsg sm = msg.getSpecialMsg();
+				
+				if (sm.getType() == SpecialMsg.Type.VIEW) {
+					processViewMessage(sm.getView());
+				} else if (sm.getType() == SpecialMsg.Type.SYNC) {
+					processSyncMessage(sm.getSync());
+				}
 			}
-			
-			// TODO
-			// Message type = UPDATE_VIEW
 		}
+	}
+	
+	private void processSyncMessage(Sync sync) {
+		AccDetails.synchronizeAccounts(sync);
+		TransactionLog.synchronizeTransactions(sync);		
+	}
+	
+	private void processViewMessage(View view) {
+		NodeProperties properties = BranchServer.getProperties();
+		properties.updateView(view);
+		// If it is my group then a few special cases.
+		if (view.getGroupId() == properties.getGroupId()) {
+			NodeProperties.ServerState myState = properties.getState();
+			String myNode = properties.getNode();
+			String mySuccessor = view.getSuccessor(myNode);
+
+			if (myState == NodeProperties.ServerState.TAIL) {
+				if (mySuccessor != null) {
+					// I am the tail, but now I have a successor.
+					// Send a SYNC message to the new tail.
+					Sync sync = new Sync(
+							AccDetails.getAllAccnts(),
+							TransactionLog.getAllTransactions());
+					Message msg = new Message(myNode, new SpecialMsg(sync));
+					NetworkWrapper.sendToServer(msg.toString(), mySuccessor);
+					
+					if (view.getPredecessor(myNode) != null) {
+						properties.updateState(NodeProperties.ServerState.MIDDLE);
+					} else {
+						properties.updateState(NodeProperties.ServerState.HEAD);
+					}
+				}
+			} else {
+				if (mySuccessor == null) {
+					properties.updateState(NodeProperties.ServerState.TAIL);
+				}
+			}			
+		}
+		
 	}
 }
