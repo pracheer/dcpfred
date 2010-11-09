@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.HashMap;
 
 /**
  * 
@@ -164,6 +165,18 @@ public class NodeProperties {
 	
 	public ServerState getState() {
 		return serverState_;
+	}
+	
+	public View getView() {
+		// DO NOT keep a local view_
+		// The updateView method should update the HashMap.
+		// And successive calls to getView() should automatically
+		// get the latest view for the current node.
+		// Keeping a separate view_ will include extra state handling
+		// (as the cache will go dirty).
+		View myView = views_.get(node_);
+		
+		return myView;
 	}
 
 	public String print() {
