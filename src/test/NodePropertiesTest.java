@@ -126,7 +126,7 @@ public class NodePropertiesTest extends TestCase {
 		
 		Topology tpl = properties_.getTopology();
 		assertTrue(tpl.isReachable("S01"));
-		assertFalse(tpl.isReachable("S02"));
+		assertTrue(tpl.isReachable("S02"));
 
 		NodeLocations nl = properties_.getServerLocations();
 		NodeLocations.Location l = nl.getLocationForNode("S03");
