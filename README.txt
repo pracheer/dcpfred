@@ -12,10 +12,10 @@ How to Install:
 	CONFIG.TXT
 	JAR (BANK.JAR)
 	
-server.txt contains ipaddress of each server and each GUI.
-config.txt contains the name of all servers that will get automatically registered with Oracle when the oracle starts. So the user does not have to manually input all servers when the server starts. Also, the oracle will display each chain as a new server get added to it.
+server.txt contains ipaddress of each server and each GUI, as well as the oracle.
+config.txt contains the name of all servers that will get automatically registered with Oracle when the oracle starts. So the user does not have to manually input all servers when the system starts. Also, the oracle will display the updated view of the chain as a new server gets added to it.
 
-4. Click the LAUNCH.CMD file. Clicking on LAUNCH.CMD will start 6 servers (2 services each with 3 servers) and 2 corresponding GUIs. They will use the topology specified in TOPOLOGY.TXT (specifying unidirectional and bidirectional links) and SERVERS.TXT.
+4. Click the LAUNCH.CMD file. Clicking on LAUNCH.CMD will start 6 servers (2 services each with 3 servers) and 2 corresponding GUIs. They will use the topology specified in TOPOLOGY_FILE.TXT (specifying bidirectional links) and SERVERS.TXT.
 
 5. The Oracle GUI will also start by Launch.cmd
 
