@@ -38,8 +38,9 @@ public class BranchGUI extends javax.swing.JFrame {
 	private static NodeProperties properties_;
 	
 	private static BlockingMessageHandler bmh_;
-	private int snapshotCounter_ = 0;
+//	private int snapshotCounter_ = 0;
 	private int lastSerialNumCounter_ =0;
+	public static String waitingFor_ = null;
 	
 	/** Creates new form BranchGUI */
 	public BranchGUI() {
@@ -523,7 +524,7 @@ public class BranchGUI extends javax.swing.JFrame {
 
 		msg = new Message(properties_.getNode(), Message.MsgType.REQ, transaction, null);
 		tempStr = msg.toString();
-
+		waitingFor_ = transaction.getSerialNum();
 		boolean sendStatus = bmh_.sendRequest(msg.toString());
 		
 		if (sendStatus == false) {
@@ -706,19 +707,23 @@ public class BranchGUI extends javax.swing.JFrame {
 					// Print the response to the GUI text-area.
 					TrxnResponse tResponse = msg.getTrxnResponse();
 
-					branchGUI.printUserString(tResponse);
 					if (tResponse.getType() == TrxnResponse.Type.SNAPSHOT) {
 						// Response is of a snapshot request.
 						String snapshotId = tResponse.getSerialNum();
 						String initiatingBranch = snapshotId.substring(1, 3);
 
-						// Wake-Up the GUI if the request was from this GUI.
+						// Wake-Up the GUI if the snapshot request was from this GUI.
 						if (initiatingBranch.equalsIgnoreCase(properties_.getGroupId())){
+							branchGUI.printUserString(tResponse);
 							bmh_.notifyOfResponse();
 						}
-					} else {
-						// Wake-Up the GUI if the request was from this GUI.
+					} else if (tResponse.getType() == TrxnResponse.Type.TRANSACTION 
+									&& tResponse.getSerialNum().equals(BranchGUI.waitingFor_)){
+						// Wake-Up the GUI if the transaction request was from this GUI.
+						// Before waking up ensure that this response is the TrxnResponse that you were waiting for
+						branchGUI.printUserString(tResponse);
 						bmh_.notifyOfResponse();
+						BranchGUI.waitingFor_ = null;
 					}
 				} else if (msg.getType() == Message.MsgType.SPECIAL) {
 					SpecialMsg sm = msg.getSpecialMsg();
