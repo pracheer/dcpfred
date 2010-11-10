@@ -278,6 +278,7 @@ public class Oracle extends javax.swing.JFrame {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(properties_.configFile_));
 			String str;
+			Thread.sleep(100);
 			while((str = reader.readLine())!= null) {
 				if(str.startsWith("#") || str.isEmpty())
 					continue;
