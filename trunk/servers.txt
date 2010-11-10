@@ -12,17 +12,10 @@ S02_01 localhost 12360
 S02_02 localhost 12361
 S02_03 localhost 12362
 
-S03_01 localhost 12370
-S03_02 localhost 12371
-S03_03 localhost 12372
-
-
 #GUIs
 
 G01 localhost 12385
 G02 localhost 12386
-G03 localhost 12387
-
 
 #Oracle
 Oracle localhost 12396

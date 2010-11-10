@@ -6,9 +6,7 @@
 # grp_1 grp_2
 
 01 02
-02 03
 
 #Oracle needs to connect with all services/groups
 00 01
 00 02
-00 03
