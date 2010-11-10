@@ -19,7 +19,7 @@ Quazi:  15 - 20 hours
 Brainstorming
 View Updation
 Changing network wrappers to implement send functions keeping the topology in mind
-Changing server code to implement Head/Tail/Middle funtionality
+Changing server code to implement Head/Tail/Middle functionality
 Unit Tests
 Code Refactoring
 
