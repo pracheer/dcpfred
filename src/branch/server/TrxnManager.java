@@ -1,5 +1,6 @@
 package branch.server;
 
+
 /**
  * 
  * Gives a processTransaction interface for processing a transaction.
@@ -108,11 +109,13 @@ public class TrxnManager {
 
 		// Deposit the amount to the destination account at different branch
 		if (!trxn_.getSourceBranch().equalsIgnoreCase(trxn_.getDestBranch())) {
-			Message msg = new Message(BranchServer.getProperties().getNode(),
-					Message.MsgType.REQ, trxn_, null);
+			if (BranchServer.getProperties().getState() == NodeProperties.ServerState.TAIL) {
+				Message msg = new Message(BranchServer.getProperties().getNode(),
+						Message.MsgType.REQ, trxn_, null);
 
-			if (!NetworkWrapper.sendToService(msg.toString(), destinationGrp)) {
-				System.err.println("Not able to send message to destination Server.");
+				if (!NetworkWrapper.sendToService(msg.toString(), destinationGrp)) {
+					System.err.println("Not able to send message to destination Server.");
+				}
 			}
 		}
 
