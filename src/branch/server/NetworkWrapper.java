@@ -26,14 +26,29 @@ public abstract class NetworkWrapper {
 			System.err.println("Not reachable : " + service.toString());
 			return false;
 		}
-		// TODO testcase
 		
 		if(properties_.views_ == null || properties_.views_.get(service)== null) {
-			System.err.println("View is empty");
+			System.err.println("View is empty. Service unavailable.");
 			return false;
 		}
 		
 		server = properties_.views_.get(service).getHead();
+		return send(msg, server);
+	}
+	
+	public static boolean queryToServiceTail(String msg, String service) {
+		String server = null;
+		final Topology tpl = properties_.getTopology();
+		if (!tpl.isReachable(service)) {
+			System.err.println("Not reachable : " + service.toString());
+			return false;
+		}
+		if(properties_.views_ == null || properties_.views_.get(service)== null) {
+			System.err.println("View is empty. Service unavailable.");
+			return false;
+		}
+		
+		server = properties_.views_.get(service).getTail();
 		return send(msg, server);
 	}
 	
