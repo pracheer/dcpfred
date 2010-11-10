@@ -185,7 +185,6 @@ public class NodeProperties {
 	}
 
 	public void updateView(View view) {
-
 		ServerState oldState = getState();
 		views_.put(view.getGroupId(), view);
 		if(groupId_.equalsIgnoreCase(view.getGroupId()) && !isGui_) {

@@ -234,13 +234,13 @@ public class Oracle extends javax.swing.JFrame {
 				if(group.equalsIgnoreCase(groupid))
 					continue;
 				View tmpView = properties_.views_.get(group);
-				SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, tmpView, null, null);
+				SpecialMsg spl = new SpecialMsg(tmpView);
 				msg = new Message(properties_.getNode(), spl);
 				NetworkWrapper.sendToServer(msg.toString(), server);
 			}
 			
 			// Sending the new view to EVERYONE
-			SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
+			SpecialMsg spl = new SpecialMsg(view);
 			msg = new Message(properties_.getNode(), spl);
 			broadcastView(msg);
 			textArea.append("Server " + server + " added. Updated view is:" + "\n");
