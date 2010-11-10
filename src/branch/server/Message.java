@@ -74,6 +74,13 @@ public class Message {
 					+ Trxn.msgSeparator.length()));
 		}
 	}
+	
+	public static Message getAckMessageFromSerialNumber(
+			String sourceNode,
+			String serialNumber) {
+		SpecialMsg sm = new SpecialMsg(serialNumber);
+		return new Message(sourceNode, sm);
+	}
 
 	// Creates String representation of message object.
 	public String toString() {

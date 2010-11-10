@@ -1,6 +1,8 @@
 package branch.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * 
@@ -18,9 +20,11 @@ import java.util.HashMap;
 public class MsgProcessingThread extends Thread {
 	MsgQueue messages_;
 	HashMap<String, Snapshot> snapshots = new HashMap<String, Snapshot> (100);
+	PendingMessageQueue pmessages_;
 
 	public MsgProcessingThread(MsgQueue messages) {
 		messages_ = messages;
+		pmessages_ = new PendingMessageQueue();
 	}
 
 	public void run() {
@@ -86,9 +90,13 @@ public class MsgProcessingThread extends Thread {
 						myState == NodeProperties.ServerState.MIDDLE) {
 					String nextNode = myView.getSuccessor(properties.getNode());
 					NetworkWrapper.sendToServer(msg.toString(), nextNode);
-				} else if (myState == NodeProperties.ServerState.TAIL && isRequestFromGui) {
-					NetworkWrapper.sendToGui(responseMessage.toString());
-				} else if (isRequestFromGui) {
+					pmessages_.addMessage(msg);
+				} else if (myState == NodeProperties.ServerState.TAIL) {
+					if(isRequestFromGui) {
+						NetworkWrapper.sendToGui(responseMessage.toString());
+					}
+					processAckMessage(msg.getTrxn().getSerialNum());
+				} else {
 					System.err.println("Server does not have a valid state.");
 				}
 
@@ -107,6 +115,8 @@ public class MsgProcessingThread extends Thread {
 					processViewMessage(sm.getView());
 				} else if (sm.getType() == SpecialMsg.Type.SYNC) {
 					processSyncMessage(sm.getSync());
+				} else if (sm.getType() == SpecialMsg.Type.CHAIN_ACK) {
+					processAckMessage(sm.getAckSerialNum());
 				}
 			}
 		}
@@ -124,23 +134,52 @@ public class MsgProcessingThread extends Thread {
 		if (view.getGroupId().equals(properties.getGroupId())) {
 			NodeProperties.ServerState myState = properties.getState();
 			String myNode = properties.getNode();
-			String mySuccessor = view.getSuccessor(myNode);
+			
+			String myCurrSuccessor = null;
+			if (properties.getMyView() != null) {
+				myCurrSuccessor = properties.getMyView().getSuccessor(myNode);
+			}
+			String myNewSuccessor = view.getSuccessor(myNode);
 
 			if (myState == NodeProperties.ServerState.TAIL) {
-				if (mySuccessor != null) {
+				if (myNewSuccessor != null) {
 					// I am the tail, but now I have a successor.
 					// Send a SYNC message to the new tail.
 					Sync sync = new Sync(
 							AccDetails.getAllAccnts(),
 							TransactionLog.getAllTransactions());
 					Message msg = new Message(myNode, new SpecialMsg(sync));
-					NetworkWrapper.sendToServer(msg.toString(), mySuccessor);
-					System.out.println("Sending a sync message to " + mySuccessor);
+					NetworkWrapper.sendToServer(msg.toString(), myNewSuccessor);
+					System.out.println("Sending a sync message to " + myNewSuccessor);
 					System.out.println(msg);
 				}
-			} 
+			} else if (myCurrSuccessor != null && !myCurrSuccessor.equals(myNewSuccessor)) {
+				String destServer = myNewSuccessor == null ? myNode : myNewSuccessor;
+				ArrayList<Message> pms = pmessages_.getMessages();
+				for (int i = 0; i < pms.size(); ++i) {
+					NetworkWrapper.sendToServer(pms.get(i).toString(), destServer);
+				}
+
+				if (myNewSuccessor == null) {
+					pmessages_.clear();
+				}				
+			}
 		}
 		
 		properties.updateView(view);
 	}
+	
+	private void processAckMessage(String serialNum) {
+		pmessages_.ackMessage(serialNum);
+		
+		String myNode = BranchServer.getProperties().getNode();
+		String myPredecessor = BranchServer.getProperties().getMyView().getPredecessor(myNode);
+		
+		Message msg = Message.getAckMessageFromSerialNumber(myNode, serialNum);
+		
+		if (myPredecessor != null) {
+			NetworkWrapper.sendToServer(msg.toString(), myPredecessor);
+		}
+	}
+	
 }

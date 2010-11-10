@@ -28,6 +28,14 @@ public class FlagParserTest extends TestCase {
 		}
 	}
 	
+	public void testNull() {
+		String str1 = null;
+		String str2 = "what";
+		
+		assertFalse(str2.equals(str1));
+		
+	}
+		
 	public void testValueNotPresent() {
 		String[] args = new String[3];
 		args[0] = "-port";
