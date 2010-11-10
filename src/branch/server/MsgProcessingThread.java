@@ -64,6 +64,11 @@ public class MsgProcessingThread extends Thread {
 					NetworkWrapper.sendToGui(responseMessage.toString());
 				}
 			} else if (msg.getType() == Message.MsgType.REQ) { // Message is a normal Message - Request.
+				try {
+					sleep(properties.getSleepTime());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				/* Process the transaction request */
 				TrxnManager tm = new TrxnManager(msg.getTrxn());
 				Message responseMessage = new Message(
