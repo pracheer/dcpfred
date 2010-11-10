@@ -219,7 +219,8 @@ public class NodeProperties {
 		return node_.toString() + " starting at port:" + port_
 		+ " using the topology file:" + topologyFile_
 		+ ", servers file: " + serverLocationFile_
-		+ " and sleep time of " + sleep_ + " milliseconds.";
+		+ " and sleep time of " + sleep_ + " milliseconds."
+		+ " This server is part of group " + groupId_;
 	}
 
 	/**
