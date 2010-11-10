@@ -525,7 +525,7 @@ public class BranchGUI extends javax.swing.JFrame {
 		msg = new Message(properties_.getNode(), Message.MsgType.REQ, transaction, null);
 		tempStr = msg.toString();
 		waitingFor_ = transaction.getSerialNum();
-		boolean sendStatus = bmh_.sendRequest(msg.toString());
+		boolean sendStatus = bmh_.sendRequest(msg.toString(), transaction.getSerialNum());
 		
 		if (sendStatus == false) {
 			textArea.append("Could not connect to server. Unable to process request.\n"+LINE);
@@ -590,7 +590,7 @@ public class BranchGUI extends javax.swing.JFrame {
 			waitingTime_ = INITIAL_WAITING_TIME;
 		}
 
-		boolean sendRequest(String msg) {
+		boolean sendRequest(String msg, String ser_num) {
 			try {
 				toWakeUp_ = Thread.currentThread();
 				while (true) {
@@ -598,7 +598,11 @@ public class BranchGUI extends javax.swing.JFrame {
 					
 					// Even if we fail to connect to the head, we keep on retrying.
 					// As it could be the case that head is the server that went down.
-					NetworkWrapper.sendToService(msg, properties_.getGroupId());
+					if (ser_num.startsWith("Q")) {
+						NetworkWrapper.queryToServiceTail(msg, properties_.getGroupId());
+					} else {
+						NetworkWrapper.sendToService(msg, properties_.getGroupId());
+					}
 
 					Thread.sleep(waitingTime_);
 				}
