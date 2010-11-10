@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,7 +32,7 @@ import javax.swing.JFormattedTextField;
  */
 public class Oracle extends javax.swing.JFrame {
 	private static final String ORACLE = "ORACLE";
-	public static final String LINE = "---------------------------------------------------------------------------------------------\n";
+	public static final String LINE = "------------------------------------------------------------------------------\n";
 	private static NodeProperties properties_;
 
 	
@@ -141,30 +143,33 @@ public class Oracle extends javax.swing.JFrame {
 		String server = serverNameTextField.getText();
 		String groupid = NodeName.getService(server);
 
+		if (!checkServerNameFormat(serverNameTextField.getText())) {
+			textArea.append("Server Name format incorrect. View not updated.\n"+LINE);
+			return;
+		}
+		
 		if(properties_.views_.containsKey(groupid)) {
 			view = properties_.views_.get(groupid);
 			if (view.removeServer(server)) {
 				if(view.isEmpty())
 					properties_.views_.remove(groupid);
 				else
-					properties_.views_.put(groupid, view);
-				
+					properties_.views_.put(groupid, view);			
 				// Sending the new view to EVERYONE
 				// TODO the server is still ON. 
 				//what does it do when it does not find itself in the view.
 				SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
 				Message msg = new Message(properties_.getNode(), spl);
 				broadcastView(msg);
-				textArea.append(view.toString() + "\n");
+				textArea.append("Server " + server + " removed. Updated view is:" + "\n");
+				textArea.append(view.prettyString() + "\n" + LINE);
 			} 
 			else {
-				// TODO print error
-				textArea.setText("Error: can't find server");
+				textArea.append("Error: can't find server\n" + LINE);
 			}
 		} 
 		else {
-			// TODO error view = new View(groupid);
-			textArea.setText("Error: can't find server");
+			textArea.append("Error: can't find server.\n" + LINE);
 		}		
 	}
 
@@ -180,11 +185,24 @@ public class Oracle extends javax.swing.JFrame {
 			NetworkWrapper.sendToServer(msg.toString(), server);
 		}
 	}
-	
+	private boolean checkServerNameFormat (String str) {
+		// Initialize reg ex for numeric data.
+		String expression = "^S[0-9][0-9]_[0-9][0-9]$";
+		CharSequence inputStr = str;
+		Pattern pattern = Pattern.compile(expression);
+		Matcher matcher = pattern.matcher(inputStr);
+		if (matcher.matches()) {
+			return true;
+		}
+		return false;
+	}
 	private void addServerActionPerformed(ActionEvent evt) {
 		
 		ArrayList<String> initialConfig = new ArrayList<String>();
-		
+		if (!checkServerNameFormat(serverNameTextField.getText())) {
+			textArea.append("Server Name format incorrect. View not updated.\n"+LINE);
+			return;
+		}
 		initialConfig.add(serverNameTextField.getText());
 //		initialConfig.add("S01_01");
 ////		inititialConfig.add("S02_01");
@@ -225,7 +243,8 @@ public class Oracle extends javax.swing.JFrame {
 			SpecialMsg spl = new SpecialMsg(SpecialMsg.Type.VIEW, view, null, null);
 			msg = new Message(properties_.getNode(), spl);
 			broadcastView(msg);
-			textArea.append(view.toString() + "\n");
+			textArea.append("Server " + server + " added. Updated view is:" + "\n");
+			textArea.append(view.prettyString() + "\n" + LINE);
 		}
 	}
 
@@ -242,9 +261,7 @@ public class Oracle extends javax.swing.JFrame {
 	}
 
 	public static void main(String args[]) {
-		
-		ServerSocket serverSocket = null;
-
+	
 		try {
 			properties_ = new NodeProperties(args, true);
 		} catch (NodeProperties.NodePropertiesException e) {
@@ -252,68 +269,11 @@ public class Oracle extends javax.swing.JFrame {
 			System.err.println("Unable to parse CLI for Oracle GUI");
 		}
 		NetworkWrapper.setProperties(properties_);
-
-		// Match the IP of the current machine with the IP provided in 'servers'
-		String myIp = properties_.getIp();
-		if (!myIp.equals("localhost") && !myIp.equals("127.0.0.1")) {
-			InetAddress inet = null;
-			try {
-				inet = InetAddress.getLocalHost();
-			} catch (UnknownHostException e1) {
-				System.err.println("Could not get inet-address for machine.");
-				System.exit(1);
-			}
-
-			if (!inet.getHostAddress().equals(myIp)) {
-				System.err.println("Server is supposed to start from: " + myIp);
-				System.exit(1);
-			}
-		}
-
-		// Check that a valid port was provided.
-		if (properties_.getPort() < 0) {
-			System.err.println("port not assigned.");
-			System.exit(1);
-		}
-
-		// Create a ServerSocket for the given port.
-		try {
-			serverSocket = new ServerSocket(properties_.getPort());
-		} catch (IOException e){
-			System.err.println(
-					"Could not listen to port: " + properties_.getPort());
-			//System.exit(1);
-		}
-
-		Oracle branchGUI = new Oracle();
-		GuiThread guiThread = new GuiThread(branchGUI);
+		Oracle oracleGUI = new Oracle();
+		GuiThread guiThread = new GuiThread(oracleGUI);
 		java.awt.EventQueue.invokeLater(guiThread);
 
 		System.out.println(properties_.print());
 
-		// Oracle GUI starts listening.
-		while (true) {
-			try {
-				Socket clientSocket = serverSocket.accept();
-
-				BufferedReader in = new BufferedReader(
-						new InputStreamReader(clientSocket.getInputStream()));
-				String str = in.readLine();
-
-				Message msg = Message.parseString(str);
-
-				if(msg.type_ == Message.MsgType.REQ || msg.type_ == Message.MsgType.RESP ) {
-					// No-one should send a REQ to Oracle GUI.
-					System.err.println("Unexpected message type in Oracle GUI. Ignoring.");
-					continue;
-				} else {
-					// Only REQ / RESP type message is expected.
-					System.err.println("Unknown type of message received. Ignoring.");
-				}
-			} catch (IOException e) {
-				System.err.println("Coult not accept connection.");
-				System.exit(1);
-			}
-		}
 	}
 }

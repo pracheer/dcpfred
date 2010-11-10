@@ -74,4 +74,15 @@ public class View {
 		}
 		return view;
 	}
+	
+	public String prettyString() {
+		String str = "For group: " + groupId_ + " the view is:-\n";
+		str += "Head";
+		for(int i = 0; i < listOfServers.size(); i++)
+		{
+			str += " - " + listOfServers.get(i);
+		}
+		str += " - Tail";
+		return str;
+	}
 }
