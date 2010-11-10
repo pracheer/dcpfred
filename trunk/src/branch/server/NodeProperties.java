@@ -25,6 +25,7 @@ public class NodeProperties {
 	private String ip_;
 	private final int port_;
 	private final boolean isGui_;
+	public  String configFile_;
 
 	public HashMap<String, View> views_ = 
 		new HashMap<String, View>(10);
@@ -105,6 +106,8 @@ public class NodeProperties {
 					serverLocationFile_ = argument.getValue();
 				} else if (argument.getName().endsWith("sleep")) {
 					sleep_ = Integer.parseInt(argument.getValue());
+				} else if (argument.getName().endsWith("config")) {
+					configFile_ = argument.getValue();
 				} else if (argument.getName().endsWith("group")) {
 					String expression = "^[0-9][0-9]$";
 					Pattern pattern = Pattern.compile(expression);

@@ -1,6 +1,9 @@
 package branch.server;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -10,6 +13,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JFormattedTextField;
+
 
 
 /**
@@ -204,11 +209,6 @@ public class Oracle extends javax.swing.JFrame {
 			return;
 		}
 		initialConfig.add(serverNameTextField.getText());
-//		initialConfig.add("S01_01");
-////		inititialConfig.add("S02_01");
-//		initialConfig.add("S01_02");
-////		inititialConfig.add("S02_02");
-////		inititialConfig.add("S01_01");
 
 		for (String server : initialConfig) {
 			String groupid = NodeName.getService(server);
@@ -275,5 +275,29 @@ public class Oracle extends javax.swing.JFrame {
 
 		System.out.println(properties_.print());
 
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(properties_.configFile_));
+			String str;
+			while((str = reader.readLine())!= null) {
+				if(str.startsWith("#") || str.isEmpty())
+					continue;
+				str = str.trim();
+				int index1 = str.indexOf(Trxn.msgSeparator);
+				int sleepTime = Integer.parseInt(str.substring(0, index1));
+				int index2 = str.indexOf(Trxn.msgSeparator, index1 + Trxn.msgSeparator.length());
+				String action = str.substring(index1 + Trxn.msgSeparator.length(), index2);
+				String serverName = str.substring(index2 + Trxn.msgSeparator.length());
+				Thread.sleep(sleepTime);
+				oracleGUI.serverNameTextField.setText(serverName);
+				ActionEvent evt = null;
+				if(action.equalsIgnoreCase("ADD")) {
+					oracleGUI.addServerActionPerformed(evt);
+				} else if (action.equalsIgnoreCase("REMOVE")) {
+					oracleGUI.removeServerButtonActionPerformed(evt);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Oracele running in normal mode. No testfile found.");
+		}
 	}
 }
