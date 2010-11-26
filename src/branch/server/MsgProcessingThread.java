@@ -21,10 +21,12 @@ public class MsgProcessingThread extends Thread {
 	MsgQueue messages_;
 	HashMap<String, Snapshot> snapshots = new HashMap<String, Snapshot> (100);
 	PendingMessageQueue pmessages_;
+	AccDetails accounts_;
 
 	public MsgProcessingThread(MsgQueue messages) {
 		messages_ = messages;
 		pmessages_ = new PendingMessageQueue();
+		accounts_ = new AccDetails();
 	}
 
 	public void run() {
@@ -50,7 +52,7 @@ public class MsgProcessingThread extends Thread {
 				
 				if (!snapshots.containsKey(snapshotId)) {
 					/* initiating a new snapshot */
-					snapshot = new Snapshot(snapshotId);
+					snapshot = new Snapshot(snapshotId, (HashMap<String, Double>) accounts_.getAllAccnts().clone());
 					snapshots.put(snapshotId, snapshot);			
 				}
 
@@ -74,7 +76,7 @@ public class MsgProcessingThread extends Thread {
 					e.printStackTrace();
 				}
 				/* Process the transaction request */
-				TrxnManager tm = new TrxnManager(msg.getTrxn());
+				TrxnManager tm = new TrxnManager(msg.getTrxn(), accounts_);
 				Message responseMessage = new Message(
 						properties.getNode(),
 						Message.MsgType.RESP,
@@ -123,7 +125,7 @@ public class MsgProcessingThread extends Thread {
 	}
 	
 	private void processSyncMessage(Sync sync) {
-		AccDetails.synchronizeAccounts(sync);
+		accounts_.synchronizeAccounts(sync);
 		TransactionLog.synchronizeTransactionLog(sync);		
 	}
 	
@@ -146,7 +148,7 @@ public class MsgProcessingThread extends Thread {
 					// I am the tail, but now I have a successor.
 					// Send a SYNC message to the new tail.
 					Sync sync = new Sync(
-							AccDetails.getAllAccnts(),
+							accounts_.getAllAccnts(),
 							TransactionLog.getAllTransactions());
 					Message msg = new Message(myNode, new SpecialMsg(sync));
 					NetworkWrapper.sendToServer(msg.toString(), myNewSuccessor);
