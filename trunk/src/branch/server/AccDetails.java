@@ -13,12 +13,14 @@ import java.util.HashMap;
  */
 public class AccDetails {
 
-	private static HashMap<String, Double> accountDetails = 
-		new HashMap<String, Double>(100);
+	private HashMap<String, Double> accountDetails;
 
-	protected AccDetails() {	}
+	public AccDetails() {	
+		accountDetails = 
+			new HashMap<String, Double>(100);
+	}
 
-	public static synchronized Double deposit(String acnt, Double depositAmt) {
+	public synchronized Double deposit(String acnt, Double depositAmt) {
 		Double finalAmt;
 		if (accountDetails.containsKey(acnt)) {
 			finalAmt = accountDetails.get(acnt) + depositAmt;
@@ -31,7 +33,7 @@ public class AccDetails {
 		return finalAmt;
 	}
 
-	public static synchronized Double withdraw(String acnt, Double withdrawAmt) {
+	public synchronized Double withdraw(String acnt, Double withdrawAmt) {
 		
 		Double existingAmt = 0.0;
 		if (accountDetails.containsKey(acnt)) 
@@ -44,18 +46,18 @@ public class AccDetails {
 		return finalAmt;
 	}
 
-	public static synchronized Double query(String acnt) {
+	public synchronized Double query(String acnt) {
 		if (!accountDetails.containsKey(acnt))
 			accountDetails.put(acnt, 0.0);
 		
 		return accountDetails.get(acnt);
 	}
 
-	public static synchronized HashMap<String,Double> getAllAccnts() {
+	public synchronized HashMap<String,Double> getAllAccnts() {
 		return (HashMap<String, Double>)accountDetails.clone();
 	}
 	
-	public static synchronized void synchronizeAccounts(Sync sync) {
+	public synchronized void synchronizeAccounts(Sync sync) {
 		accountDetails = sync.getAccountDetails();
 	}
 }

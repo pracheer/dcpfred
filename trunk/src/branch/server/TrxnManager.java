@@ -9,9 +9,11 @@ package branch.server;
 
 public class TrxnManager {
 	private Trxn trxn_;
+	private AccDetails accounts_;
 
-	public TrxnManager(Trxn ts) {
+	public TrxnManager(Trxn ts, AccDetails accounts) {
 		trxn_ = ts;
+		accounts_ = accounts;
 	}
 
 	public TrxnResponse processTransaction() {
@@ -25,26 +27,26 @@ public class TrxnManager {
 		case DEPOSIT:
 
 			if (!TransactionLog.containsTrxn(trxn_.getSerialNum())) {
-				AccDetails.deposit(trxn_.getSourceAccount(), trxn_.getAmount());
+				accounts_.deposit(trxn_.getSourceAccount(), trxn_.getAmount());
 				TransactionLog.addTrxn(trxn_);
 			}
-			balance = AccDetails.getAllAccnts().get(trxn_.getSourceAccount());
+			balance = accounts_.query(trxn_.getSourceAccount());
 			trxnResponse = new TrxnResponse(trxn_.getSerialNum(), TrxnResponse.Type.TRANSACTION, balance, false, "");
 			break;
 
 		case WITHDRAW:
 
 			if (!TransactionLog.containsTrxn(serial_Num)) {
-				AccDetails.withdraw(trxn_.getSourceAccount(), trxn_.getAmount());
+				accounts_.withdraw(trxn_.getSourceAccount(), trxn_.getAmount());
 				TransactionLog.addTrxn(trxn_);
 			}
-			balance = AccDetails.getAllAccnts().get(trxn_.getSourceAccount());
+			balance = accounts_.query(trxn_.getSourceAccount());
 			trxnResponse = new TrxnResponse(trxn_.getSerialNum(), TrxnResponse.Type.TRANSACTION, balance, false, "");
 			break;
 
 		case QUERY:
 			/* not added to log, not even checked in log */
-			balance = AccDetails.query(trxn_.getSourceAccount());
+			balance = accounts_.query(trxn_.getSourceAccount());
 			trxnResponse = new TrxnResponse(trxn_.getSerialNum(), TrxnResponse.Type.TRANSACTION, balance, false, "");
 			break;
 
@@ -69,17 +71,17 @@ public class TrxnManager {
 		Double balance;
 		// handle transfer at destination
 		if (!TransactionLog.containsTrxn(trxn_.getSerialNum())) {
-			AccDetails.deposit(trxn_.getDestAccount(), trxn_.getAmount());
+			accounts_.deposit(trxn_.getDestAccount(), trxn_.getAmount());
 			TransactionLog.addTrxn(trxn_);
 		}
-		balance = AccDetails.getAllAccnts().get(trxn_.getDestAccount());
+		balance = accounts_.query(trxn_.getDestAccount());
 		trxnResponse = new TrxnResponse(trxn_.getSerialNum(), TrxnResponse.Type.TRANSACTION, balance, false, "");
 		return trxnResponse;
 	}
 
 	private TrxnResponse handleTransferAtSource() {
 		TrxnResponse trxnResponse;
-		Double balance;
+		Double balance = (double) -1;
 		String destinationGrp = trxn_.getDestBranch();
 		
 		// See if Destination Server is reachable.
@@ -88,7 +90,7 @@ public class TrxnManager {
 			if (!topology.isReachable(destinationGrp)) {
 				trxnResponse = new TrxnResponse(trxn_.getSerialNum()
 						, TrxnResponse.Type.TRANSACTION 
-						, AccDetails.query(trxn_.getSourceAccount())
+						, accounts_.query(trxn_.getSourceAccount())
 						, true
 						, "Error: Destination Server Not reachable in topology.");
 				return trxnResponse;
@@ -96,15 +98,18 @@ public class TrxnManager {
 		}
 		// Local Withdraw 
 		if (!TransactionLog.containsTrxn(trxn_.getSerialNum())) {
-			AccDetails.withdraw(trxn_.getSourceAccount(), trxn_.getAmount());
+			accounts_.withdraw(trxn_.getSourceAccount(), trxn_.getAmount());
 			if (trxn_.getSourceBranch().equalsIgnoreCase(trxn_.getDestBranch())) {
 				//Local Deposit
-				AccDetails.deposit(trxn_.getDestAccount(), trxn_.getAmount());
+				balance = accounts_.deposit(trxn_.getDestAccount(), trxn_.getAmount());
 			}
 			TransactionLog.addTrxn(trxn_);
 		}
 		else {
+			// TODO: Bug: The first time transfer occurs, client is sent a balance.
+			// If he reexecutes his transaction, he might get a difference balance.
 			trxn_ = TransactionLog.getTrxn(trxn_.getSerialNum());
+			balance = accounts_.query(trxn_.getSourceAccount());
 		}
 
 		// Deposit the amount to the destination account at different branch
@@ -119,7 +124,6 @@ public class TrxnManager {
 			}
 		}
 
-		balance = AccDetails.getAllAccnts().get(trxn_.getSourceAccount());
 		trxnResponse = new TrxnResponse(trxn_.getSerialNum(), TrxnResponse.Type.TRANSACTION, balance, false, "");
 		return trxnResponse;
 	}

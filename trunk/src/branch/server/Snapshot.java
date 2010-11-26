@@ -22,7 +22,7 @@ public class Snapshot {
 
 	private String snapshotId_ = "";
 	private State state_ = State.NOT_STARTED;
-	private HashMap<String, Double> accounts;
+	private HashMap<String, Double> accounts_;
 	private HashMap<String, ArrayList<Message>> oChannels; 	// This will keep track of channels on which markers HAVE NOT been received (open Channels).
 	private HashMap<String, ArrayList<Message>> cChannels;	// This will keep track of channels on which markers HAVE been received (closed Channels).
 
@@ -30,7 +30,7 @@ public class Snapshot {
 	/* this function initiates a snapshot, stores local state 
 	 * and sends out markers on all outgoing channels */
 	@SuppressWarnings("unchecked")
-	public Snapshot(String Id) {
+	public Snapshot(String Id, HashMap<String, Double> accounts) {
 		NodeProperties properties = BranchServer.getProperties();
 		/* reading topology info */
 		final Topology tpl = BranchServer.getProperties().getTopology();
@@ -39,7 +39,7 @@ public class Snapshot {
 
 		/* Inititiating variables */
 		this.snapshotId_ = Id;
-		this.accounts = (HashMap<String, Double>) AccDetails.getAllAccnts().clone(); // local state recorded
+		this.accounts_ = accounts; // local state recorded
 		this.state_ = State.RECORDING_CHANNELS;
 		this.oChannels = new HashMap<String, ArrayList<Message>>(inNeighbors.size());
 		this.cChannels = new HashMap<String, ArrayList<Message>>(inNeighbors.size());
@@ -157,7 +157,7 @@ public class Snapshot {
 		String str = "";
 		str += Snapshot.ACCOUNT_STR  + SEPARATOR;
 		
-		Iterator<Map.Entry<String, Double>> aIt = accounts.entrySet().iterator();
+		Iterator<Map.Entry<String, Double>> aIt = accounts_.entrySet().iterator();
 		while (aIt.hasNext()) {
 			Map.Entry<String, Double> pair = (Map.Entry<String, Double>) aIt.next();
 			
